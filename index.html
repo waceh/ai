@@ -1,8 +1,111 @@
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <title>Hello World!</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent & Ecosystem Glossary</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="AI 에이전트, LLM, MCP, 하네스 엔지니어링 등 현대 AI 핵심 용어와 기술 생태계의 연관 관계를 시각적으로 탐색할 수 있는 인터랙티브 용어사전 프로토타입입니다.">
+  <meta name="author" content="Antigravity AI">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  Hello World!
+  <div class="stars-bg"></div>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <h1>AI Agent & Ecosystem <span class="gradient-text">Glossary</span></h1>
+      <button type="button" class="graph-open-btn" id="open-graph-modal">연결 망 보기</button>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="app-main">
+      <section class="left-panel glass-card">
+        <div class="panel-header">
+          <h2>용어 목록</h2>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="용어 검색 (예: MCP, 하네스)..." autocomplete="off">
+          </div>
+        </div>
+        
+        <div class="category-tabs" id="category-tabs">
+          <button class="tab-btn active" data-category="all">전체</button>
+          <button class="tab-btn" data-category="core">코어 엔진</button>
+          <button class="tab-btn" data-category="agent">에이전트/도구</button>
+          <button class="tab-btn" data-category="env">환경/보안</button>
+        </div>
+
+        <div class="term-list" id="term-list">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- Term Detail -->
+      <section class="detail-card glass-card" id="detail-card">
+        <div class="detail-placeholder" id="detail-placeholder">
+          <p class="placeholder-hint">
+            <span class="placeholder-icon" aria-hidden="true">💡</span>
+            <span class="placeholder-text">좌측 목록에서 용어를 선택하거나, 상단 「연결 망 보기」로 개념 관계를 탐색하세요.</span>
+          </p>
+        </div>
+        <div class="detail-content hidden" id="detail-content">
+          <div class="detail-header">
+            <span class="category-badge" id="detail-category">카테고리</span>
+            <h2 id="detail-title">용어명</h2>
+            <p class="english-title" id="detail-english-title">English Term Name</p>
+          </div>
+          
+          <div class="definition-section">
+            <h3>한 줄 정의</h3>
+            <div class="one-line-def" id="detail-one-line"></div>
+          </div>
+
+          <div class="description-section">
+            <h3>세부 설명</h3>
+            <div class="full-desc" id="detail-description"></div>
+          </div>
+
+          <div class="connections-section">
+            <h3>연관된 용어</h3>
+            <div class="connection-tags" id="detail-connections">
+              <!-- Dynamically populated tags -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 AI Ecosystem Explorer &middot; Designed for premium engineering visualization</p>
+    </footer>
+  </div>
+
+  <!-- Graph Modal -->
+  <div class="graph-modal hidden" id="graph-modal" role="dialog" aria-modal="true" aria-labelledby="graph-modal-title">
+    <div class="graph-modal-backdrop" id="graph-modal-backdrop"></div>
+    <div class="graph-modal-panel glass-card">
+      <div class="card-header">
+        <h3 id="graph-modal-title">개념 연결 망</h3>
+        <div class="graph-modal-actions">
+          <button type="button" class="reset-graph-btn" id="reset-graph">초기화</button>
+          <button type="button" class="graph-modal-close" id="graph-modal-close" aria-label="닫기">✕</button>
+        </div>
+      </div>
+      <div class="graph-container">
+        <canvas id="connection-graph"></canvas>
+        <div class="graph-instruction">노드를 드래그하거나 클릭하세요</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="app.js"></script>
 </body>
 </html>

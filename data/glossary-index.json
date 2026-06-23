@@ -1,0 +1,361 @@
+[
+  {
+    "id": "llm",
+    "name": "LLM",
+    "englishName": "Large Language Model",
+    "category": "core",
+    "oneLine": "AI Agent의 사고·추론을 담당하는 대형 언어 모델 코어",
+    "connections": [
+      "agent",
+      "planning",
+      "tool-use",
+      "rag",
+      "memory",
+      "token",
+      "context-window",
+      "fine-tuning"
+    ]
+  },
+  {
+    "id": "agent",
+    "name": "AI Agent",
+    "englishName": "Artificial Intelligence Agent",
+    "category": "agent",
+    "oneLine": "LLM 기반으로 목표를 해석하고 Planning·Tool Use로 자율 실행하는 시스템",
+    "connections": [
+      "llm",
+      "harness",
+      "skills",
+      "planning",
+      "memory",
+      "tool-use",
+      "mcp",
+      "orchestration",
+      "subagent",
+      "openclaw",
+      "nanoclaw"
+    ]
+  },
+  {
+    "id": "mcp",
+    "name": "MCP",
+    "englishName": "Model Context Protocol",
+    "category": "core",
+    "oneLine": "AI Agent와 외부 데이터·도구를 연결하는 오픈 표준 프로토콜",
+    "connections": [
+      "agent",
+      "tool-use",
+      "skills",
+      "harness",
+      "openclaw"
+    ]
+  },
+  {
+    "id": "skills",
+    "name": "Skills",
+    "englishName": "Agent Skills",
+    "category": "agent",
+    "oneLine": "AI Agent가 특정 업무를 수행하도록 확장하는 실행 모듈·도구 묶음",
+    "connections": [
+      "agent",
+      "mcp",
+      "tool-use",
+      "prompt",
+      "harness",
+      "openclaw"
+    ]
+  },
+  {
+    "id": "harness",
+    "name": "Harness",
+    "englishName": "Agent Harness",
+    "category": "env",
+    "oneLine": "LLM·Tool Use 실행을 Sandbox·Guardrails·HITL로 감싸는 에이전트 실행 계층",
+    "connections": [
+      "agent",
+      "llm",
+      "mcp",
+      "sandbox",
+      "guardrails",
+      "hitl",
+      "observability",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "openclaw",
+    "name": "OpenClaw",
+    "englishName": "OpenClaw Framework",
+    "category": "agent",
+    "oneLine": "다양한 Skills·MCP 플러그인을 붙이는 범용 AI Agent 프레임워크",
+    "connections": [
+      "agent",
+      "skills",
+      "mcp",
+      "nanoclaw"
+    ]
+  },
+  {
+    "id": "nanoclaw",
+    "name": "NanoClaw",
+    "englishName": "NanoClaw Framework",
+    "category": "env",
+    "oneLine": "Sandbox 격리 중심의 경량·고보안 AI Agent 프레임워크",
+    "connections": [
+      "agent",
+      "sandbox",
+      "guardrails",
+      "hitl",
+      "openclaw"
+    ]
+  },
+  {
+    "id": "tool-use",
+    "name": "Tool Use",
+    "englishName": "Tool Use / Function Calling",
+    "category": "core",
+    "oneLine": "LLM이 JSON 형태로 함수·API 호출을 선언하는 AI Agent 핵심 기술",
+    "connections": [
+      "llm",
+      "mcp",
+      "skills",
+      "harness",
+      "planning",
+      "streaming"
+    ]
+  },
+  {
+    "id": "sandbox",
+    "name": "Sandbox",
+    "englishName": "Execution Sandbox",
+    "category": "env",
+    "oneLine": "AI Agent의 코드·파일 조작을 격리하는 Harness 보안 실행 환경",
+    "connections": [
+      "harness",
+      "nanoclaw",
+      "guardrails"
+    ]
+  },
+  {
+    "id": "guardrails",
+    "name": "Guardrails",
+    "englishName": "Safety Guardrails",
+    "category": "env",
+    "oneLine": "Prompt·Tool Use 전후를 검사해 AI Agent 행동을 제한하는 안전 정책",
+    "connections": [
+      "harness",
+      "nanoclaw",
+      "hitl",
+      "prompt",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "planning",
+    "name": "Planning",
+    "englishName": "Agent Planning (ReAct / CoT)",
+    "category": "core",
+    "oneLine": "LLM이 문제를 분해·추론하고 AI Agent 행동 순서를 설계하는 방식",
+    "connections": [
+      "llm",
+      "agent",
+      "tool-use",
+      "prompt",
+      "orchestration",
+      "subagent",
+      "evaluation"
+    ]
+  },
+  {
+    "id": "memory",
+    "name": "Memory",
+    "englishName": "Agent Memory",
+    "category": "core",
+    "oneLine": "AI Agent가 Context Window·Vector DB로 맥락과 이력을 유지하는 저장 계층",
+    "connections": [
+      "llm",
+      "agent",
+      "context-window",
+      "embeddings",
+      "vector-db",
+      "rag",
+      "token"
+    ]
+  },
+  {
+    "id": "hitl",
+    "name": "HITL",
+    "englishName": "Human-in-the-Loop",
+    "category": "env",
+    "oneLine": "고위험 Tool Use 전에 사람 승인을 받는 Harness 제어 패턴",
+    "connections": [
+      "harness",
+      "guardrails",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "rag",
+    "name": "RAG",
+    "englishName": "Retrieval-Augmented Generation",
+    "category": "core",
+    "oneLine": "Vector DB 검색 결과를 LLM Prompt에 넣어 답변을 보강하는 기법",
+    "connections": [
+      "llm",
+      "embeddings",
+      "vector-db",
+      "prompt",
+      "memory"
+    ]
+  },
+  {
+    "id": "prompt",
+    "name": "Prompt",
+    "englishName": "Prompt / System Prompt",
+    "category": "core",
+    "oneLine": "LLM·AI Agent 행동을 규정하는 지시문·역할·제약 정의",
+    "connections": [
+      "llm",
+      "agent",
+      "guardrails",
+      "rag",
+      "planning",
+      "skills"
+    ]
+  },
+  {
+    "id": "context-window",
+    "name": "Context Window",
+    "englishName": "Context Window",
+    "category": "core",
+    "oneLine": "LLM이 한 번에 처리할 수 있는 Token 한도(단기 Memory 용량)",
+    "connections": [
+      "llm",
+      "memory",
+      "token",
+      "rag"
+    ]
+  },
+  {
+    "id": "token",
+    "name": "Token",
+    "englishName": "Token",
+    "category": "core",
+    "oneLine": "LLM이 텍스트를 쪼개 처리하는 최소 단위·과금 기준",
+    "connections": [
+      "llm",
+      "context-window",
+      "streaming",
+      "memory"
+    ]
+  },
+  {
+    "id": "embeddings",
+    "name": "Embeddings",
+    "englishName": "Vector Embeddings",
+    "category": "core",
+    "oneLine": "텍스트를 Vector DB에 넣기 위한 의미 벡터 표현",
+    "connections": [
+      "rag",
+      "vector-db",
+      "memory",
+      "llm"
+    ]
+  },
+  {
+    "id": "vector-db",
+    "name": "Vector DB",
+    "englishName": "Vector Database",
+    "category": "core",
+    "oneLine": "Embeddings를 저장·검색해 RAG·Memory를 지원하는 데이터베이스",
+    "connections": [
+      "rag",
+      "embeddings",
+      "memory",
+      "observability"
+    ]
+  },
+  {
+    "id": "fine-tuning",
+    "name": "Fine-tuning",
+    "englishName": "Fine-tuning",
+    "category": "core",
+    "oneLine": "특정 도메인·스타일에 LLM 가중치를 추가 학습시키는 방법",
+    "connections": [
+      "llm",
+      "prompt",
+      "evaluation",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "orchestration",
+    "name": "Orchestration",
+    "englishName": "Agent Orchestration",
+    "category": "agent",
+    "oneLine": "여러 AI Agent·Subagent의 작업 분배와 실행 순서를 조율하는 계층",
+    "connections": [
+      "agent",
+      "subagent",
+      "planning",
+      "harness",
+      "observability"
+    ]
+  },
+  {
+    "id": "subagent",
+    "name": "Subagent",
+    "englishName": "Subagent",
+    "category": "agent",
+    "oneLine": "Orchestration 아래 특정 하위 목표만 맡는 전문 AI Agent",
+    "connections": [
+      "agent",
+      "orchestration",
+      "planning",
+      "harness",
+      "llm"
+    ]
+  },
+  {
+    "id": "streaming",
+    "name": "Streaming",
+    "englishName": "Response Streaming",
+    "category": "core",
+    "oneLine": "LLM·Tool Use 결과를 Token 단위로 실시간 전송하는 응답 방식",
+    "connections": [
+      "llm",
+      "token",
+      "tool-use",
+      "agent"
+    ]
+  },
+  {
+    "id": "observability",
+    "name": "Observability",
+    "englishName": "Agent Observability",
+    "category": "env",
+    "oneLine": "AI Agent의 Prompt·Tool Use·RAG 호출을 추적·분석하는 운영 체계",
+    "connections": [
+      "harness",
+      "agent",
+      "rag",
+      "evaluation",
+      "vector-db"
+    ]
+  },
+  {
+    "id": "evaluation",
+    "name": "Evaluation",
+    "englishName": "Agent Evaluation",
+    "category": "env",
+    "oneLine": "AI Agent·Planning·RAG 품질을 벤치마크·회귀 테스트로 측정하는 활동",
+    "connections": [
+      "agent",
+      "planning",
+      "rag",
+      "observability",
+      "fine-tuning",
+      "prompt"
+    ]
+  }
+]
