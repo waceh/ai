@@ -162,20 +162,20 @@ body {
   color: var(--color-primary);
 }
 
-.badge-qna {
+.badge-faq {
   background: rgba(244, 63, 94, 0.12);
   border-color: rgba(244, 63, 94, 0.35);
   color: #fda4af;
 }
 
-.qna-summary-line {
+.faq-summary-line {
   color: var(--text-muted);
   font-size: 0.95rem;
   margin-top: 0.35rem;
   line-height: 1.55;
 }
 
-.qna-item .term-desc-preview {
+.faq-item .term-desc-preview {
   font-style: italic;
 }
 
@@ -644,7 +644,7 @@ body.graph-modal-open {
   display: none;
 }
 
-.qna-detail-content {
+.faq-detail-content {
   opacity: 1;
   transition: opacity 0.3s ease;
   display: flex;
@@ -655,7 +655,7 @@ body.graph-modal-open {
   overflow: hidden;
 }
 
-.qna-detail-content.hidden {
+.faq-detail-content.hidden {
   display: none;
 }
 
@@ -678,7 +678,7 @@ body.graph-modal-open {
 }
 
 #detail-category,
-#qna-detail-category {
+#faq-detail-category {
   grid-area: badge;
   align-self: start;
   justify-self: start;

@@ -23,7 +23,7 @@
       <div class="header-actions">
         <div class="view-mode-tabs" id="view-mode-tabs" role="tablist" aria-label="탐색 모드">
           <button type="button" class="view-mode-btn active" data-view="terms" role="tab" aria-selected="true">용어</button>
-          <button type="button" class="view-mode-btn" data-view="qna" role="tab" aria-selected="false">Q&amp;A</button>
+          <button type="button" class="view-mode-btn" data-view="faq" role="tab" aria-selected="false">FAQ</button>
         </div>
         <button type="button" class="graph-open-btn" id="open-graph-modal">연결 망 보기</button>
       </div>
@@ -47,10 +47,10 @@
           <button class="tab-btn" data-category="env">환경/보안</button>
         </div>
 
-        <div class="category-tabs hidden" id="qna-category-tabs">
-          <button class="tab-btn active" data-qna-category="all">전체</button>
-          <button class="tab-btn" data-qna-category="how-it-works">동작 원리</button>
-          <button class="tab-btn" data-qna-category="models">모델·제품</button>
+        <div class="category-tabs hidden" id="faq-category-tabs">
+          <button class="tab-btn active" data-faq-category="all">전체</button>
+          <button class="tab-btn" data-faq-category="how-it-works">동작 원리</button>
+          <button class="tab-btn" data-faq-category="models">모델·제품</button>
         </div>
 
         <div class="term-list" id="term-list">
@@ -113,27 +113,27 @@
           </div>
         </div>
 
-        <div class="qna-detail-content hidden" id="qna-detail-content">
+        <div class="faq-detail-content hidden" id="faq-detail-content">
           <div class="detail-top-bar">
-            <span class="category-badge badge-qna" id="qna-detail-category">Q&amp;A</span>
+            <span class="category-badge badge-faq" id="faq-detail-category">FAQ</span>
             <div class="detail-header">
-              <h2 id="qna-detail-question">질문</h2>
-              <p class="qna-summary-line" id="qna-detail-summary"></p>
+              <h2 id="faq-detail-question">질문</h2>
+              <p class="faq-summary-line" id="faq-detail-summary"></p>
             </div>
             <div class="connections-section">
               <p class="connections-label">관련 용어</p>
-              <div class="connection-tags-wrap" id="qna-related-wrap">
-                <div class="connection-tags-preview" id="qna-related-preview"></div>
-                <div class="connection-tags-popover" id="qna-related-popover" role="region" aria-label="관련 용어 전체">
+              <div class="connection-tags-wrap" id="faq-related-wrap">
+                <div class="connection-tags-preview" id="faq-related-preview"></div>
+                <div class="connection-tags-popover" id="faq-related-popover" role="region" aria-label="관련 용어 전체">
                   <p class="connection-tags-popover-title">관련 용어</p>
-                  <div class="connection-tags-popover-body" id="qna-related-popover-body"></div>
+                  <div class="connection-tags-popover-body" id="faq-related-popover-body"></div>
                 </div>
               </div>
             </div>
           </div>
           <div class="description-section">
             <h3>답변</h3>
-            <div class="full-desc" id="qna-detail-body"></div>
+            <div class="full-desc" id="faq-detail-body"></div>
           </div>
         </div>
       </section>

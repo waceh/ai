@@ -7,15 +7,15 @@ const descriptionRawCache = new Map();
 const descriptionPlainCache = new Map();
 const CONTENT_BASE = "content/terms";
 const EXAMPLES_BASE = "content/examples";
-const QNA_BASE = "content/qna";
+const FAQ_BASE = "content/faq";
 
 const exampleCache = new Map();
 
-let qnaData = [];
-const qnaById = new Map();
+let faqData = [];
+const faqById = new Map();
 
-const qnaRawCache = new Map();
-const qnaPlainCache = new Map();
+const faqRawCache = new Map();
+const faqPlainCache = new Map();
 
 let markedReady = false;
 
@@ -50,12 +50,12 @@ function initGlossaryFromBundle() {
       exampleCache.set(id, raw);
     });
   }
-  if (bundle.qnaIndex) {
-    qnaData = bundle.qnaIndex;
-    buildQnaIndex();
-    if (bundle.qnaArticles) {
-      Object.entries(bundle.qnaArticles).forEach(([id, raw]) => {
-        cacheQnaContent(id, raw);
+  if (bundle.faqIndex) {
+    faqData = bundle.faqIndex;
+    buildFaqIndex();
+    if (bundle.faqArticles) {
+      Object.entries(bundle.faqArticles).forEach(([id, raw]) => {
+        cacheFaqContent(id, raw);
       });
     }
   }
@@ -69,50 +69,50 @@ async function initGlossaryFromFetch() {
   buildGlossaryIndex();
 }
 
-function buildQnaIndex() {
-  qnaById.clear();
-  qnaData.forEach((item) => {
-    qnaById.set(item.id, item);
+function buildFaqIndex() {
+  faqById.clear();
+  faqData.forEach((item) => {
+    faqById.set(item.id, item);
   });
 }
 
-function cacheQnaContent(id, raw) {
-  qnaRawCache.set(id, raw);
-  qnaPlainCache.set(id, markdownToPlainText(raw));
+function cacheFaqContent(id, raw) {
+  faqRawCache.set(id, raw);
+  faqPlainCache.set(id, markdownToPlainText(raw));
   return raw;
 }
 
-async function initQnaFromFetch() {
-  const res = await fetch("data/qna-index.json");
-  if (!res.ok) throw new Error(`qna index HTTP ${res.status}`);
-  qnaData = await res.json();
-  buildQnaIndex();
+async function initFaqFromFetch() {
+  const res = await fetch("data/faq-index.json");
+  if (!res.ok) throw new Error(`faq index HTTP ${res.status}`);
+  faqData = await res.json();
+  buildFaqIndex();
 }
 
-async function initQna() {
-  if (window.__GLOSSARY__?.qnaIndex) {
-    qnaData = window.__GLOSSARY__.qnaIndex;
-    buildQnaIndex();
-    if (window.__GLOSSARY__.qnaArticles) {
-      Object.entries(window.__GLOSSARY__.qnaArticles).forEach(([id, raw]) => {
-        cacheQnaContent(id, raw);
+async function initFaq() {
+  if (window.__GLOSSARY__?.faqIndex) {
+    faqData = window.__GLOSSARY__.faqIndex;
+    buildFaqIndex();
+    if (window.__GLOSSARY__.faqArticles) {
+      Object.entries(window.__GLOSSARY__.faqArticles).forEach(([id, raw]) => {
+        cacheFaqContent(id, raw);
       });
     }
     return;
   }
   if (!isLocalDevHost()) {
-    if (await loadBundleScript() && window.__GLOSSARY__?.qnaIndex) {
-      qnaData = window.__GLOSSARY__.qnaIndex;
-      buildQnaIndex();
-      if (window.__GLOSSARY__.qnaArticles) {
-        Object.entries(window.__GLOSSARY__.qnaArticles).forEach(([id, raw]) => {
-          cacheQnaContent(id, raw);
+    if (await loadBundleScript() && window.__GLOSSARY__?.faqIndex) {
+      faqData = window.__GLOSSARY__.faqIndex;
+      buildFaqIndex();
+      if (window.__GLOSSARY__.faqArticles) {
+        Object.entries(window.__GLOSSARY__.faqArticles).forEach(([id, raw]) => {
+          cacheFaqContent(id, raw);
         });
       }
       return;
     }
   }
-  await initQnaFromFetch();
+  await initFaqFromFetch();
 }
 
 function isLocalDevHost() {
@@ -380,24 +380,24 @@ function renderExample(raw, termId, linkableIds, container) {
   }
 }
 
-async function loadQnaContent(id) {
-  if (qnaRawCache.has(id)) return qnaRawCache.get(id);
+async function loadFaqContent(id) {
+  if (faqRawCache.has(id)) return faqRawCache.get(id);
 
-  const bundled = window.__GLOSSARY__?.qnaArticles?.[id];
-  if (bundled) return cacheQnaContent(id, bundled);
+  const bundled = window.__GLOSSARY__?.faqArticles?.[id];
+  if (bundled) return cacheFaqContent(id, bundled);
 
-  const res = await fetch(`${QNA_BASE}/${id}.md`);
-  if (!res.ok) throw new Error(`qna HTTP ${res.status}`);
-  return cacheQnaContent(id, await res.text());
+  const res = await fetch(`${FAQ_BASE}/${id}.md`);
+  if (!res.ok) throw new Error(`faq HTTP ${res.status}`);
+  return cacheFaqContent(id, await res.text());
 }
 
-function preloadAllQna() {
-  if (window.__GLOSSARY__?.qnaArticles) return;
+function preloadAllFaq() {
+  if (window.__GLOSSARY__?.faqArticles) return;
 
-  qnaData.forEach((item) => {
-    loadQnaContent(item.id)
+  faqData.forEach((item) => {
+    loadFaqContent(item.id)
       .then(() => {
-        if (searchQuery && currentViewMode === "qna") renderQnaList();
+        if (searchQuery && currentViewMode === "faq") renderFaqList();
       })
       .catch(() => {});
   });
@@ -713,7 +713,7 @@ const categoryMeta = {
   env: { name: "환경/보안", color: "#10b981" }
 };
 
-const qnaCategoryMeta = {
+const faqCategoryMeta = {
   "how-it-works": { name: "동작 원리", color: "#38bdf8" },
   models: { name: "모델·제품", color: "#a855f7" },
 };
@@ -721,9 +721,9 @@ const qnaCategoryMeta = {
 // State Variables
 let currentViewMode = "terms";
 let currentSelectedId = null;
-let currentSelectedQnaId = null;
+let currentSelectedFaqId = null;
 let currentCategoryFilter = "all";
-let currentQnaCategoryFilter = "all";
+let currentFaqCategoryFilter = "all";
 let searchQuery = "";
 
 // Canvas variables
@@ -756,7 +756,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const appMain = document.querySelector(".app-main");
   try {
     await initGlossary();
-    await initQna();
+    await initFaq();
     initMarked();
   } catch (err) {
     console.error(err);
@@ -790,13 +790,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   preloadAllDescriptions();
-  preloadAllQna();
+  preloadAllFaq();
 });
 
 function initUI() {
   const searchInput = document.getElementById("search-input");
   const tabButtons = document.querySelectorAll("#category-tabs .tab-btn");
-  const qnaTabButtons = document.querySelectorAll("#qna-category-tabs .tab-btn");
+  const faqTabButtons = document.querySelectorAll("#faq-category-tabs .tab-btn");
   const viewModeButtons = document.querySelectorAll(".view-mode-btn");
   const resetBtn = document.getElementById("reset-graph");
   const openGraphBtn = document.getElementById("open-graph-modal");
@@ -816,8 +816,8 @@ function initUI() {
   // Search
   searchInput.addEventListener("input", (e) => {
     searchQuery = e.target.value.toLowerCase().trim();
-    if (currentViewMode === "qna") {
-      renderQnaList();
+    if (currentViewMode === "faq") {
+      renderFaqList();
     } else {
       renderTermList();
     }
@@ -833,13 +833,13 @@ function initUI() {
     });
   });
 
-  // Category Tabs (Q&A)
-  qnaTabButtons.forEach((btn) => {
+  // Category Tabs (FAQ)
+  faqTabButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      qnaTabButtons.forEach((b) => b.classList.remove("active"));
+      faqTabButtons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-      currentQnaCategoryFilter = btn.dataset.qnaCategory;
-      renderQnaList();
+      currentFaqCategoryFilter = btn.dataset.faqCategory;
+      renderFaqList();
     });
   });
 
@@ -1059,14 +1059,14 @@ function updateListPanelChrome() {
   const title = document.getElementById("list-panel-title");
   const searchInput = document.getElementById("search-input");
   const termTabs = document.getElementById("category-tabs");
-  const qnaTabs = document.getElementById("qna-category-tabs");
+  const faqTabs = document.getElementById("faq-category-tabs");
   const placeholderText = document.querySelector(".placeholder-text");
 
-  if (currentViewMode === "qna") {
-    if (title) title.textContent = "Q&A 목록";
+  if (currentViewMode === "faq") {
+    if (title) title.textContent = "FAQ 목록";
     if (searchInput) searchInput.placeholder = "질문 검색 (예: Opus, 프롬프트)…";
     termTabs?.classList.add("hidden");
-    qnaTabs?.classList.remove("hidden");
+    faqTabs?.classList.remove("hidden");
     if (placeholderText) {
       placeholderText.textContent =
         "좌측에서 궁금한 질문을 선택하세요. 관련 용어 링크로 용어집으로 이동할 수 있습니다.";
@@ -1075,7 +1075,7 @@ function updateListPanelChrome() {
     if (title) title.textContent = "용어 목록";
     if (searchInput) searchInput.placeholder = "용어 검색 (예: MCP, 하네스)…";
     termTabs?.classList.remove("hidden");
-    qnaTabs?.classList.add("hidden");
+    faqTabs?.classList.add("hidden");
     if (placeholderText) {
       placeholderText.textContent =
         "좌측 목록에서 용어를 선택하거나, 상단 「연결 망 보기」로 개념 관계를 탐색하세요.";
@@ -1084,7 +1084,7 @@ function updateListPanelChrome() {
 }
 
 function setViewMode(mode) {
-  if (mode !== "terms" && mode !== "qna") return;
+  if (mode !== "terms" && mode !== "faq") return;
   if (currentViewMode === mode) return;
 
   currentViewMode = mode;
@@ -1096,14 +1096,14 @@ function setViewMode(mode) {
 
   updateListPanelChrome();
 
-  if (mode === "qna") {
-    renderQnaList();
-    if (qnaData.length > 0) {
+  if (mode === "faq") {
+    renderFaqList();
+    if (faqData.length > 0) {
       const keep =
-        currentSelectedQnaId && qnaById.has(currentSelectedQnaId)
-          ? currentSelectedQnaId
-          : qnaData[0].id;
-      selectQna(keep);
+        currentSelectedFaqId && faqById.has(currentSelectedFaqId)
+          ? currentSelectedFaqId
+          : faqData[0].id;
+      selectFaq(keep);
     } else {
       showDetailPlaceholder();
     }
@@ -1124,17 +1124,17 @@ function setViewMode(mode) {
 function showDetailPlaceholder() {
   document.getElementById("detail-placeholder")?.classList.remove("hidden");
   document.getElementById("detail-content")?.classList.add("hidden");
-  document.getElementById("qna-detail-content")?.classList.add("hidden");
+  document.getElementById("faq-detail-content")?.classList.add("hidden");
 }
 
-function renderQnaList() {
+function renderFaqList() {
   const listContainer = document.getElementById("term-list");
   listContainer.innerHTML = "";
 
-  const filtered = qnaData.filter((item) => {
+  const filtered = faqData.filter((item) => {
     const matchesCategory =
-      currentQnaCategoryFilter === "all" || item.category === currentQnaCategoryFilter;
-    const plain = qnaPlainCache.get(item.id) || "";
+      currentFaqCategoryFilter === "all" || item.category === currentFaqCategoryFilter;
+    const plain = faqPlainCache.get(item.id) || "";
     const matchesSearch =
       item.question.toLowerCase().includes(searchQuery) ||
       item.summary.toLowerCase().includes(searchQuery) ||
@@ -1146,75 +1146,74 @@ function renderQnaList() {
     const empty = document.createElement("div");
     empty.className = "term-list-empty";
     empty.textContent = searchQuery
-      ? `"${searchQuery}"에 맞는 Q&A가 없습니다.`
-      : "이 카테고리에 표시할 Q&A가 없습니다.";
+      ? `"${searchQuery}"에 맞는 FAQ가 없습니다.`
+      : "이 카테고리에 표시할 FAQ가 없습니다.";
     listContainer.appendChild(empty);
     return;
   }
 
   filtered.forEach((item) => {
     const el = document.createElement("div");
-    el.className = `term-item qna-item ${item.id === currentSelectedQnaId ? "active" : ""}`;
+    el.className = `term-item faq-item ${item.id === currentSelectedFaqId ? "active" : ""}`;
     el.dataset.id = item.id;
 
-    const catLabel = qnaCategoryMeta[item.category]?.name || "Q&A";
+    const catLabel = faqCategoryMeta[item.category]?.name || "FAQ";
     el.innerHTML = `
       <div class="term-item-header">
         <span class="term-name">${item.question}</span>
-        <span class="term-badge badge-qna">${catLabel}</span>
+        <span class="term-badge badge-faq">${catLabel}</span>
       </div>
       <div class="term-desc-preview">${item.summary}</div>
     `;
 
-    el.addEventListener("click", () => selectQna(item.id));
+    el.addEventListener("click", () => selectFaq(item.id));
     listContainer.appendChild(el);
   });
 }
 
-function selectQna(id) {
-  if (currentViewMode !== "qna") {
-    setViewMode("qna");
+function selectFaq(id) {
+  if (currentViewMode !== "faq") {
+    setViewMode("faq");
   }
 
-  currentSelectedQnaId = id;
+  currentSelectedFaqId = id;
 
   document.querySelectorAll(".term-item").forEach((item) => {
     item.classList.toggle("active", item.dataset.id === id);
   });
 
-  const item = qnaById.get(id);
+  const item = faqById.get(id);
   if (!item) return;
 
   const placeholder = document.getElementById("detail-placeholder");
   const termContent = document.getElementById("detail-content");
-  const qnaContent = document.getElementById("qna-detail-content");
-
+  const faqContent = document.getElementById("faq-detail-content");
   placeholder.classList.add("hidden");
   termContent.classList.add("hidden");
-  qnaContent.classList.remove("hidden");
+  faqContent.classList.remove("hidden");
 
-  const badge = document.getElementById("qna-detail-category");
-  const cat = qnaCategoryMeta[item.category];
-  badge.textContent = cat ? cat.name : "Q&A";
-  badge.className = "category-badge badge-qna";
+  const badge = document.getElementById("faq-detail-category");
+  const cat = faqCategoryMeta[item.category];
+  badge.textContent = cat ? cat.name : "FAQ";
+  badge.className = "category-badge badge-faq";
 
-  document.getElementById("qna-detail-question").textContent = item.question;
-  document.getElementById("qna-detail-summary").textContent = item.summary;
+  document.getElementById("faq-detail-question").textContent = item.question;
+  document.getElementById("faq-detail-summary").textContent = item.summary;
 
-  const bodyEl = document.getElementById("qna-detail-body");
+  const bodyEl = document.getElementById("faq-detail-body");
   bodyEl.replaceChildren();
   const loading = document.createElement("p");
   loading.className = "desc-loading";
   loading.textContent = "답변을 불러오는 중…";
   bodyEl.appendChild(loading);
 
-  loadQnaContent(id)
+  loadFaqContent(id)
     .then((raw) => {
-      if (currentSelectedQnaId !== id) return;
+      if (currentSelectedFaqId !== id) return;
       renderMarkdownContent(raw, item.relatedTerms, bodyEl);
     })
     .catch(() => {
-      if (currentSelectedQnaId !== id) return;
+      if (currentSelectedFaqId !== id) return;
       bodyEl.replaceChildren();
       const err = document.createElement("p");
       err.className = "desc-error";
@@ -1222,7 +1221,7 @@ function selectQna(id) {
       bodyEl.appendChild(err);
     });
 
-  renderConnectionTags(item.relatedTerms || [], document.getElementById("qna-related-wrap"));
+  renderConnectionTags(item.relatedTerms || [], document.getElementById("faq-related-wrap"));
 
   const listElement = document.querySelector(`.term-item[data-id="${id}"]`);
   if (listElement) {
@@ -1302,11 +1301,11 @@ function selectTerm(id) {
 
   const placeholder = document.getElementById("detail-placeholder");
   const content = document.getElementById("detail-content");
-  const qnaContent = document.getElementById("qna-detail-content");
+  const faqContent = document.getElementById("faq-detail-content");
   
   placeholder.classList.add("hidden");
   content.classList.remove("hidden");
-  qnaContent.classList.add("hidden");
+  faqContent.classList.add("hidden");
   
   const badge = document.getElementById("detail-category");
   badge.textContent = categoryMeta[term.category].name;
