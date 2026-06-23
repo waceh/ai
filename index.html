@@ -87,8 +87,13 @@
             </div>
             <div class="connections-section">
               <p class="connections-label">연관된 용어</p>
-              <div class="connection-tags-row" id="detail-connections-row-1"></div>
-              <div class="connection-tags-row" id="detail-connections-row-2"></div>
+              <div class="connection-tags-wrap" id="detail-connections-wrap">
+                <div class="connection-tags-preview" id="detail-connections-preview"></div>
+                <div class="connection-tags-popover" id="detail-connections-popover" role="region" aria-label="연관된 용어 전체">
+                  <p class="connection-tags-popover-title">연관된 용어</p>
+                  <div class="connection-tags-popover-body" id="detail-connections-popover-body"></div>
+                </div>
+              </div>
             </div>
           </div>
           
@@ -117,8 +122,13 @@
             </div>
             <div class="connections-section">
               <p class="connections-label">관련 용어</p>
-              <div class="connection-tags-row" id="qna-related-row-1"></div>
-              <div class="connection-tags-row" id="qna-related-row-2"></div>
+              <div class="connection-tags-wrap" id="qna-related-wrap">
+                <div class="connection-tags-preview" id="qna-related-preview"></div>
+                <div class="connection-tags-popover" id="qna-related-popover" role="region" aria-label="관련 용어 전체">
+                  <p class="connection-tags-popover-title">관련 용어</p>
+                  <div class="connection-tags-popover-body" id="qna-related-popover-body"></div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="description-section">
@@ -154,7 +164,7 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+  <script src="vendor/marked.umd.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

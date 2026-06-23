@@ -9,14 +9,17 @@ window.__GLOSSARY__ = {
       "oneLine": "AI Agent의 사고·추론을 담당하는 대형 언어 모델 코어",
       "connections": [
         "agent",
-        "planning",
-        "tool-use",
-        "rag",
-        "memory",
-        "token",
         "context-window",
+        "embeddings",
         "fine-tuning",
-        "aws-bedrock"
+        "guardrails",
+        "memory",
+        "planning",
+        "prompt",
+        "rag",
+        "token",
+        "tool-use",
+        "vector-db"
       ]
     },
     {
@@ -26,19 +29,22 @@ window.__GLOSSARY__ = {
       "category": "agent",
       "oneLine": "LLM 기반으로 목표를 해석하고 Planning·Tool Use로 자율 실행하는 시스템",
       "connections": [
-        "llm",
+        "guardrails",
         "harness",
-        "skills",
-        "planning",
-        "memory",
-        "tool-use",
+        "hitl",
+        "llm",
         "mcp",
-        "orchestration",
-        "subagent",
-        "openclaw",
+        "memory",
         "nanoclaw",
-        "aws-bedrock",
-        "aws-knowledge-base"
+        "observability",
+        "openclaw",
+        "orchestration",
+        "planning",
+        "prompt",
+        "sandbox",
+        "skills",
+        "subagent",
+        "tool-use"
       ]
     },
     {
@@ -49,10 +55,11 @@ window.__GLOSSARY__ = {
       "oneLine": "AI Agent와 외부 데이터·도구를 연결하는 오픈 표준 프로토콜",
       "connections": [
         "agent",
-        "tool-use",
-        "skills",
         "harness",
-        "openclaw"
+        "llm",
+        "openclaw",
+        "skills",
+        "tool-use"
       ]
     },
     {
@@ -63,11 +70,14 @@ window.__GLOSSARY__ = {
       "oneLine": "AI Agent가 특정 업무를 수행하도록 확장하는 실행 모듈·도구 묶음",
       "connections": [
         "agent",
-        "mcp",
-        "tool-use",
-        "prompt",
+        "guardrails",
         "harness",
-        "openclaw"
+        "llm",
+        "mcp",
+        "openclaw",
+        "prompt",
+        "sandbox",
+        "tool-use"
       ]
     },
     {
@@ -78,13 +88,18 @@ window.__GLOSSARY__ = {
       "oneLine": "LLM·Tool Use 실행을 Sandbox·Guardrails·HITL로 감싸는 에이전트 실행 계층",
       "connections": [
         "agent",
-        "llm",
-        "mcp",
-        "sandbox",
         "guardrails",
         "hitl",
+        "llm",
+        "mcp",
+        "memory",
         "observability",
-        "tool-use"
+        "prompt",
+        "rag",
+        "sandbox",
+        "skills",
+        "tool-use",
+        "vector-db"
       ]
     },
     {
@@ -95,9 +110,14 @@ window.__GLOSSARY__ = {
       "oneLine": "다양한 Skills·MCP 플러그인을 붙이는 범용 AI Agent 프레임워크",
       "connections": [
         "agent",
-        "skills",
+        "guardrails",
+        "harness",
+        "hitl",
         "mcp",
-        "nanoclaw"
+        "nanoclaw",
+        "sandbox",
+        "skills",
+        "tool-use"
       ]
     },
     {
@@ -108,10 +128,16 @@ window.__GLOSSARY__ = {
       "oneLine": "Sandbox 격리 중심의 경량·고보안 AI Agent 프레임워크",
       "connections": [
         "agent",
-        "sandbox",
         "guardrails",
+        "harness",
         "hitl",
-        "openclaw"
+        "llm",
+        "mcp",
+        "openclaw",
+        "prompt",
+        "sandbox",
+        "skills",
+        "tool-use"
       ]
     },
     {
@@ -121,13 +147,15 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "LLM이 JSON 형태로 함수·API 호출을 선언하는 AI Agent 핵심 기술",
       "connections": [
+        "agent",
+        "harness",
         "llm",
         "mcp",
-        "skills",
-        "harness",
         "planning",
+        "prompt",
+        "skills",
         "streaming",
-        "aws-bedrock"
+        "token"
       ]
     },
     {
@@ -137,9 +165,14 @@ window.__GLOSSARY__ = {
       "category": "env",
       "oneLine": "AI Agent의 코드·파일 조작을 격리하는 Harness 보안 실행 환경",
       "connections": [
+        "agent",
+        "guardrails",
         "harness",
         "nanoclaw",
-        "guardrails"
+        "openclaw",
+        "prompt",
+        "skills",
+        "tool-use"
       ]
     },
     {
@@ -149,12 +182,16 @@ window.__GLOSSARY__ = {
       "category": "env",
       "oneLine": "Prompt·Tool Use 전후를 검사해 AI Agent 행동을 제한하는 안전 정책",
       "connections": [
+        "agent",
         "harness",
-        "nanoclaw",
         "hitl",
+        "llm",
+        "mcp",
+        "nanoclaw",
         "prompt",
-        "tool-use",
-        "aws-bedrock"
+        "sandbox",
+        "skills",
+        "tool-use"
       ]
     },
     {
@@ -164,13 +201,14 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "LLM이 문제를 분해·추론하고 AI Agent 행동 순서를 설계하는 방식",
       "connections": [
-        "llm",
         "agent",
-        "tool-use",
-        "prompt",
+        "evaluation",
+        "llm",
         "orchestration",
+        "prompt",
+        "rag",
         "subagent",
-        "evaluation"
+        "tool-use"
       ]
     },
     {
@@ -180,14 +218,14 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "AI Agent가 Context Window·Vector DB로 맥락과 이력을 유지하는 저장 계층",
       "connections": [
-        "llm",
         "agent",
         "context-window",
         "embeddings",
-        "vector-db",
+        "llm",
+        "prompt",
         "rag",
         "token",
-        "aws-knowledge-base"
+        "vector-db"
       ]
     },
     {
@@ -197,8 +235,12 @@ window.__GLOSSARY__ = {
       "category": "env",
       "oneLine": "고위험 Tool Use 전에 사람 승인을 받는 Harness 제어 패턴",
       "connections": [
-        "harness",
         "guardrails",
+        "harness",
+        "nanoclaw",
+        "openclaw",
+        "planning",
+        "sandbox",
         "tool-use"
       ]
     },
@@ -209,12 +251,15 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "Vector DB 검색 결과를 LLM Prompt에 넣어 답변을 보강하는 기법",
       "connections": [
-        "llm",
+        "context-window",
         "embeddings",
-        "vector-db",
-        "prompt",
+        "evaluation",
+        "fine-tuning",
+        "llm",
         "memory",
-        "aws-knowledge-base"
+        "observability",
+        "prompt",
+        "vector-db"
       ]
     },
     {
@@ -224,13 +269,15 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "LLM·AI Agent 행동을 규정하는 지시문·역할·제약 정의",
       "connections": [
-        "llm",
         "agent",
         "guardrails",
-        "rag",
+        "llm",
+        "memory",
         "planning",
+        "rag",
         "skills",
-        "aws-knowledge-base"
+        "token",
+        "tool-use"
       ]
     },
     {
@@ -240,10 +287,13 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "LLM이 한 번에 처리할 수 있는 Token 한도(단기 Memory 용량)",
       "connections": [
+        "agent",
+        "embeddings",
         "llm",
         "memory",
+        "rag",
         "token",
-        "rag"
+        "vector-db"
       ]
     },
     {
@@ -253,10 +303,12 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "LLM이 텍스트를 쪼개 처리하는 최소 단위·과금 기준",
       "connections": [
-        "llm",
         "context-window",
+        "llm",
+        "memory",
+        "rag",
         "streaming",
-        "memory"
+        "tool-use"
       ]
     },
     {
@@ -266,12 +318,11 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "텍스트를 Vector DB에 넣기 위한 의미 벡터 표현",
       "connections": [
-        "rag",
-        "vector-db",
-        "memory",
         "llm",
-        "aws-bedrock",
-        "aws-knowledge-base"
+        "memory",
+        "prompt",
+        "rag",
+        "vector-db"
       ]
     },
     {
@@ -281,11 +332,13 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "Embeddings를 저장·검색해 RAG·Memory를 지원하는 데이터베이스",
       "connections": [
-        "rag",
         "embeddings",
+        "harness",
+        "llm",
         "memory",
         "observability",
-        "aws-knowledge-base"
+        "prompt",
+        "rag"
       ]
     },
     {
@@ -295,11 +348,15 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "특정 도메인·스타일에 LLM 가중치를 추가 학습시키는 방법",
       "connections": [
-        "llm",
-        "prompt",
+        "agent",
         "evaluation",
-        "tool-use",
-        "aws-bedrock"
+        "harness",
+        "llm",
+        "observability",
+        "planning",
+        "prompt",
+        "rag",
+        "tool-use"
       ]
     },
     {
@@ -310,10 +367,15 @@ window.__GLOSSARY__ = {
       "oneLine": "여러 AI Agent·Subagent의 작업 분배와 실행 순서를 조율하는 계층",
       "connections": [
         "agent",
-        "subagent",
-        "planning",
+        "context-window",
+        "evaluation",
         "harness",
-        "observability"
+        "llm",
+        "observability",
+        "planning",
+        "skills",
+        "subagent",
+        "tool-use"
       ]
     },
     {
@@ -324,10 +386,16 @@ window.__GLOSSARY__ = {
       "oneLine": "Orchestration 아래 특정 하위 목표만 맡는 전문 AI Agent",
       "connections": [
         "agent",
+        "context-window",
+        "harness",
+        "llm",
+        "memory",
         "orchestration",
         "planning",
-        "harness",
-        "llm"
+        "prompt",
+        "sandbox",
+        "skills",
+        "tool-use"
       ]
     },
     {
@@ -337,11 +405,11 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "LLM·Tool Use 결과를 Token 단위로 실시간 전송하는 응답 방식",
       "connections": [
+        "agent",
+        "harness",
         "llm",
         "token",
-        "tool-use",
-        "agent",
-        "aws-bedrock"
+        "tool-use"
       ]
     },
     {
@@ -351,10 +419,18 @@ window.__GLOSSARY__ = {
       "category": "env",
       "oneLine": "AI Agent의 Prompt·Tool Use·RAG 호출을 추적·분석하는 운영 체계",
       "connections": [
-        "harness",
         "agent",
-        "rag",
         "evaluation",
+        "harness",
+        "llm",
+        "mcp",
+        "memory",
+        "planning",
+        "prompt",
+        "rag",
+        "skills",
+        "subagent",
+        "tool-use",
         "vector-db"
       ]
     },
@@ -366,11 +442,15 @@ window.__GLOSSARY__ = {
       "oneLine": "AI Agent·Planning·RAG 품질을 벤치마크·회귀 테스트로 측정하는 활동",
       "connections": [
         "agent",
-        "planning",
-        "rag",
-        "observability",
         "fine-tuning",
-        "prompt"
+        "harness",
+        "llm",
+        "observability",
+        "planning",
+        "prompt",
+        "rag",
+        "skills",
+        "tool-use"
       ]
     },
     {
@@ -380,15 +460,17 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "AWS에서 Foundation Model·에이전트·가드레일을 API로 쓰는 완전관리형 생성형 AI 서비스",
       "connections": [
-        "llm",
-        "rag",
-        "aws-knowledge-base",
-        "tool-use",
         "agent",
-        "guardrails",
-        "streaming",
+        "aws-knowledge-base",
         "embeddings",
-        "fine-tuning"
+        "fine-tuning",
+        "guardrails",
+        "harness",
+        "llm",
+        "mcp",
+        "rag",
+        "streaming",
+        "tool-use"
       ]
     },
     {
@@ -398,14 +480,15 @@ window.__GLOSSARY__ = {
       "category": "core",
       "oneLine": "Bedrock에서 데이터 소스를 인덱싱·검색해 RAG 응답을 만드는 관리형 지식베이스",
       "connections": [
-        "rag",
+        "agent",
         "aws-bedrock",
-        "llm",
         "embeddings",
-        "vector-db",
-        "prompt",
+        "fine-tuning",
+        "llm",
         "memory",
-        "agent"
+        "prompt",
+        "rag",
+        "vector-db"
       ]
     }
   ],
@@ -481,7 +564,16 @@ window.__GLOSSARY__ = {
         "tool-use",
         "agent",
         "harness",
-        "streaming"
+        "streaming",
+        "rag",
+        "memory",
+        "mcp",
+        "skills",
+        "guardrails",
+        "hitl",
+        "sandbox",
+        "planning",
+        "observability"
       ]
     },
     {
@@ -500,7 +592,7 @@ window.__GLOSSARY__ = {
     {
       "id": "same-model-across-products",
       "question": "Claude, Codex, Cursor처럼 제품이 달라도 같은 모델이면 결과가 같나요?",
-      "summary": "모델 ID가 같아도 시스템 프롬프트·도구·맥락·Harness가 다르면 최종 결과는 달라집니다.",
+      "summary": "모델 ID가 같아도 System Prompt·주입 맥락·Tool·Harness가 다르면 최종 답은 달라집니다. User 질문만 같다고 입력이 같은 것은 아닙니다.",
       "category": "models",
       "relatedTerms": [
         "llm",
@@ -511,13 +603,20 @@ window.__GLOSSARY__ = {
         "skills",
         "mcp",
         "memory",
-        "rag"
+        "rag",
+        "token",
+        "context-window",
+        "guardrails",
+        "sandbox",
+        "streaming",
+        "evaluation",
+        "planning"
       ]
     }
   ],
   "qnaArticles": {
-    "prompt-request-flow": "---\nid: prompt-request-flow\n---\n\n### 핵심 답변\n\n프롬프트 한 줄을 보냈다고 해서 LLM이 바로 \"답\"만 돌려주는 구조가 아닙니다. 앱이 **Prompt**를 messages로 조립한 뒤 **Token**으로 쪼개 **Context Window** 안에서 **LLM**이 다음 토큰을 예측하고, **AI Agent**라면 **Tool Use** 결과를 다시 넣으며 루프를 돌 수 있습니다.\n\n### 단계별 흐름\n\n1. **입력 조립** — System Prompt(역할·규칙), User Prompt(질문), 대화 히스토리, **RAG** 검색 청크, Tool 정의(JSON Schema)가 하나의 요청 payload로 합쳐집니다.\n2. **토큰화** — 텍스트·도구 JSON이 **Token** ID 시퀀스로 바뀝니다. Context Window를 넘으면 잘리거나 요약됩니다.\n3. **추론(Inference)** — LLM이 다음 Token 확률을 계산합니다. **Streaming**이면 생성되는 Token을 순차 전송합니다.\n4. **도구 분기** — 응답이 일반 텍스트면 종료. `tool_use`(또는 동등 신호)이면 **Harness**·런타임이 실제 API·파일·DB를 실행하고 결과를 `tool_result` 메시지로 append합니다.\n5. **반복** — 3~4를 목표 달성·턴 한도·사용자 중단까지 반복합니다. 이것이 **AI Agent** 루프의 기본 형태입니다.\n\n### 비유\n\n주문서(**Prompt**)를 주방 전달 시스템이 레시피·재고 목록·안전 규칙과 합쳐 요리사(**LLM**)에게 넘기고, 요리사가 \"재료 추가 필요\"(**Tool Use**)라고 하면 창고에서 가져와 다시 요리하는 과정과 비슷합니다.\n\n### 자주 헷갈리는 점\n\n- **Prompt ≠ 전체 요청**입니다. 같은 User Prompt라도 System Prompt·RAG·Memory 내용이 바뀌면 결과가 달라집니다.\n- **LLM은 검색·실행을 직접 하지 않습니다.** Tool Use·**MCP**·**Skills**·**Harness**가 실행 계층입니다.\n- 채팅 UI에 보이는 \"한 번의 답변\" 뒤에도 Agent 모드에서는 여러 번의 LLM 호출이 숨어 있을 수 있습니다.\n\n### 같이 보면 좋은 용어\n\n**Prompt**, **LLM**, **Token**, **Context Window**, **Tool Use**, **AI Agent**, **Harness**, **Streaming**\n",
+    "prompt-request-flow": "---\nid: prompt-request-flow\n---\n\n### 핵심 답변\n\n프롬프트 한 줄을 보냈다고 해서 **LLM**이 곧바로 최종 답만 돌려주는 구조는 아닙니다. 사용자가 입력한 문장(**User Prompt**)은 그대로 모델에 들어가지 않고, 앱·**Harness**가 **System Prompt**, 대화 **Memory**, **RAG** 검색 결과, Tool 정의(JSON Schema) 등과 합쳐 `messages` 배열을 만든 뒤 API로 보냅니다.\n\n그다음 텍스트는 **Token**으로 쪼개져 **Context Window** 한도 안에서 **LLM**이 \"다음 토큰\" 확률을 반복 계산합니다. 응답이 일반 문장이면 여기서 끝날 수 있지만, **AI Agent** 모드에서는 모델이 **Tool Use**를 선언하고, 런타임이 실제 검색·파일·API를 실행한 결과를 다시 `messages`에 넣은 후 **같은 파이프라인을 반복**합니다. 채팅 UI에 보이는 \"한 번의 답변\" 뒤에 LLM 호출이 여러 번 숨어 있는 경우가 흔합니다.\n\n### 단순 채팅 vs Agent 모드\n\n| 구분 | 단순 채팅 | Agent 모드 |\n|------|-----------|------------|\n| LLM 호출 횟수 | 보통 1회(스트리밍 1세션) | 1회 이상, Tool마다 추가 호출 |\n| Tool Use | 없거나 제한적 | 검색·셸·파일·MCP 등 반복 |\n| 사용자 체감 | 질문 → 답변 | 질문 → (중간 작업) → 답변 |\n| 비용·지연 | 상대적으로 낮음 | Token·호출 수만큼 증가 |\n\nCursor Agent, Claude Code, Codex 같은 제품은 대화형 챗봇보다 오른쪽(Agent)에 가깝습니다. 열린 파일·프로젝트 맥락이 **Prompt**에 자동 주입되고, **Skills**·**MCP**로 도구 목록이 붙습니다.\n\n### 단계별 흐름\n\n1. **입력 조립**\n   - **System Prompt**: 역할, 톤, 금지 사항, 출력 형식.\n   - **User Prompt**: 사용자가 친 질문·지시.\n   - **대화 히스토리**: 이전 user/assistant 메시지(**Memory**의 단기 저장).\n   - **RAG 청크**: Vector DB 검색으로 가져온 근거 문단(있을 때).\n   - **Tool 정의**: 함수 이름, 설명, JSON Schema(Agent/API에서).\n   - 이들이 벤더 API 형식(예: Anthropic `messages`, OpenAI `messages` + `tools`)으로 합쳐집니다.\n\n2. **토큰화**\n   - 모든 문자열·도구 JSON이 **Token** ID 시퀀스로 변환됩니다.\n   - 합계가 **Context Window**를 넘으면 오래된 히스토리 삭제, 요약, RAG 청크 축소 등으로 잘립니다.\n   - 잘린 맥락은 모델이 \"모른다\"고 답하거나 환각할 수 있어, 긴 대화·대용량 코드 붙여넣기 시 주의가 필요합니다.\n\n3. **추론(Inference)**\n   - **LLM**이 다음 Token 확률 분포를 계산하고 하나(또는 샘플링으로 하나)를 선택합니다.\n   - **Streaming**이면 선택된 Token을 생성할 때마다 클라이언트로 전송해 타이핑처럼 보이게 합니다.\n   - `temperature`, `top_p` 등이 같아도 non-deterministic하게 조금씩 달라질 수 있습니다.\n\n4. **도구 분기**\n   - 모델 출력이 일반 텍스트(`assistant` 메시지)면 사용자에게 전달하고 종료할 수 있습니다.\n   - `tool_use` / `tool_calls`(벤더별 이름)가 나오면 **Harness**가 **Guardrails** 검사 후 실제 함수를 실행합니다.\n   - 실행은 **Sandbox**·**MCP** 서버·**Skills** 스크립트·사내 API 등 경로를 탑니다.\n   - 결과는 `tool_result` 형태로 `messages`에 append되고, 모델은 \"방금 도구가 돌려준 값\"을 읽은 뒤 다음 행동을 결정합니다.\n   - 고위험 작업(파일 삭제, 배포 등)은 **HITL**로 사람 승인을 거칠 수 있습니다.\n\n5. **반복**\n   - 3~4를 목표 달성, 최대 턴 수, 타임아웃, 사용자 중단까지 반복합니다.\n   - 이 루프 전체가 **AI Agent**의 기본 형태입니다. **Planning**이 길수록 중간 LLM 호출·Tool Use가 늘어납니다.\n\n### messages가 쌓이는 모습 (예시)\n\n아래는 개념적 순서입니다. 실제 필드명은 Anthropic/OpenAI 등 벤더마다 다릅니다.\n\n```\nsystem: \"You are a helpful assistant…\"\nuser: \"서울 날씨 알려줘\"\nassistant: (tool_use: get_weather, city=Seoul)\ntool_result: {\"temp\": 22, \"condition\": \"cloudy\"}\nassistant: \"서울은 현재 22도, 흐림입니다.\"\n```\n\n사용자는 마지막 `assistant` 문장만 볼 수 있지만, 그 앞의 Tool Use·`tool_result`·추가 LLM 호출이 같은 요청 흐름 안에 포함됩니다.\n\n### 비유\n\n주문서(**User Prompt**)를 주방 전달 시스템(**Harness**)이 레시피 북(**System Prompt**), 재고 목록(**RAG**·**Memory**), 사용 가능한 조리도구 목록(**Tool** 정의)과 합쳐 요리사(**LLM**)에게 넘깁니다. 요리사가 \"재료 추가 필요\"(**Tool Use**)라고 하면 창고 직원이 창고(**MCP**/API)에서 가져와 다시 요리하고, 위생·안전 담당(**Guardrails**)이 위험한 지시는 막습니다. 완성 dish가 나올 때까지 이 과정이 반복될 수 있습니다.\n\n### 자주 헷갈리는 점\n\n- **Prompt ≠ 전체 요청** — 화면에 친 한 줄만이 아니라, 시스템 지시·히스토리·검색 청크·도구 정의까지 합친 것이 모델 입력입니다.\n- **LLM은 검색·실행을 직접 하지 않음** — 날씨 API, DB, 파일 읽기는 **Tool Use** + **Harness** + **MCP**/**Skills**가 수행합니다. 모델은 \"호출할지·무엇을 호출할지\"를 텍스트/JSON으로 **선언**합니다.\n- **Streaming은 \"빨리 답하는 것\"과 \"한 번에 끝나는 것\"을 구분하지 않음** — Token이 먼저 보여도 Agent는 뒤에서 Tool을 돌리고 다시 추론할 수 있습니다.\n- **같은 질문, 다른 제품** — Cursor와 Claude 챗은 System Prompt·주입 맥락·도구 세트가 달라 결과가 달라질 수 있습니다. (자세한 비교는 Q&A 「제품이 달라도 같은 모델이면 결과가 같나요?」 참고)\n\n### 실무에서 확인하는 방법\n\n- **몇 번 호출됐는지** — API 로그, **Observability** trace에서 `messages.create` / `chat.completions` 횟수를 봅니다.\n- **무엇이 들어갔는지** — system, user, tool 목록, RAG 청크 길이를 diff합니다. \"프롬프트는 안 바꿨는데 답이 달라졌다\"면 대부분 여기가 원인입니다.\n- **왜 느린지** — Tool 실행(네트워크·셸)·Context Window 초과로 인한 잘림·재시도·긴 Planning을 의심합니다.\n- **비용** — 입력·출력 **Token** 합 × 호출 횟수. Agent는 단순 채팅보다 빠르게 늘어납니다.\n\n### 같이 보면 좋은 용어\n\n**Prompt**, **LLM**, **Token**, **Context Window**, **Tool Use**, **AI Agent**, **Harness**, **Streaming**, **RAG**, **Memory**, **MCP**, **Skills**, **Guardrails**\n",
     "model-opus-vs-sonnet": "---\nid: model-opus-vs-sonnet\n---\n\n### 핵심 답변\n\n**같은 프롬프트**를 넣어도 Opus와 Sonnet은 **다른 결과**가 나오는 것이 정상입니다. 둘 다 Anthropic 계열 **LLM**이지만, 모델 크기·학습·정렬·추론 예산(compute budget)이 다르기 때문입니다.\n\n### 왜 다른가\n\n| 구분 | Opus | Sonnet |\n|------|------|--------|\n| 포지션 | 최상위 추론·복잡 작업 | 균형(속도·비용·성능) |\n| 복잡 추론·긴 맥락 | 상대적으로 유리 | 상대적으로 약할 수 있음 |\n| 응답 속도·비용 | 보통 더 느리고 비쌈 | 보통 더 빠르고 저렴 |\n\n같은 질문이라도 Opus는 단계를 더 잘게 나누거나, Sonnet은 요약·단순화하는 경향이 생길 수 있습니다. 코드 리뷰·아키텍처 설계처럼 난이도가 높은 작업에서 차이가 더 잘 드러납니다.\n\n### \"완전히 동일한 출력\"이 어려운 이유\n\n1. **모델 가중치가 다름** — 이름만 비슷한 게 아니라 별도 체크포인트입니다.\n2. **샘플링** — `temperature` > 0이면 확률적으로 Token을 고르므로, 같은 모델·같은 설정이라도 실행마다 문장이 조금씩 달라질 수 있습니다.\n3. **결정적 재현** — `temperature=0`(또는 벤더가 제공하는 deterministic 옵션)에 가깝게 맞추면 유사도는 높아지지만, API·버전·후처리 차이로 100% 바이트 동일을 기대하기는 어렵습니다.\n\n### 실무에서 어떻게 쓰나\n\n- **Opus** — Planning이 길고, 여러 **Tool Use**가 엮이거나, 정확도가 중요한 설계·분석.\n- **Sonnet** — 대화형 응답, 반복적인 코드 보조, 비용·지연을 줄여야 하는 워크로드.\n\n모델을 바꿀 때는 **Evaluation**으로 회귀 테스트를 돌리는 것이 좋습니다. 프롬프트는 그대로인데 품질이 떨어지는 경우가 흔합니다.\n\n### 같이 보면 좋은 용어\n\n**LLM**, **Prompt**, **Token**, **Evaluation**, **Fine-tuning**\n",
-    "same-model-across-products": "---\nid: same-model-across-products\n---\n\n### 핵심 답변\n\n제품 이름(Claude, Codex, Cursor Agent 등)이 달라도 **같은 모델 ID**·**같은 API 파라미터**·**같은 messages**로 호출하면 코어 생성은 매우 비슷해질 수 있습니다. 하지만 실제 제품에서는 시스템 프롬프트·도구·맥락·**Harness**가 다르기 때문에 **사용자가 보는 최종 결과는 거의 항상 다릅니다.**\n\n### 무엇이 같아야 \"비슷한\" 결과인가\n\n아래가 모두 같을 때 API 응답 본문이 가장 가깝습니다.\n\n- 동일 **LLM** 모델 ID (예: 같은 Anthropic 모델 문자열)\n- 동일 `messages` / system 지시\n- 동일 `temperature`, `max_tokens` 등 샘플링·길이 파라미터\n- Tool 정의·RAG 청크·이미지 등 부가 입력 없음\n\n이 조건을 맞추면 \"모델 자체의 차이\"만 비교할 수 있습니다.\n\n### 제품마다 결과가 달라지는 이유\n\n1. **System Prompt·정책** — 챗 앱, IDE, API 래퍼마다 기본 지시(톤, 안전, 형식)가 다릅니다.\n2. **맥락 주입** — Cursor는 열린 파일·프로젝트 구조, Codex는 리포지토리·CI 맥락을 자동으로 넣을 수 있습니다. **Memory**·**RAG** 소스가 다릅니다.\n3. **Tool Use·Skills·MCP** — 에이전트 제품은 도구 목록과 실행 루프가 다릅니다. 모델이 \"검색 후 답변\" vs \"바로 답변\"을 선택하는 경로가 갈립니다.\n4. **Harness** — **Sandbox**, **Guardrails**, **HITL**, 로깅·재시도 정책이 최종 출력을 바꿉니다.\n5. **라우팅** — UI에 표시된 이름과 실제 백엔드 모델이 1:1이 아닐 수 있습니다. 버전·리전·폴백 모델이 다를 수 있습니다.\n\n### Claude vs Codex를 한 줄로\n\n- **Claude**(챗/API) — 대화·문서·범용 추론에 초점.\n- **Codex**(코딩 에이전트) — 코드베이스·터미널·PR 맥락과 코딩 **Tool Use**에 최적화된 **AI Agent** 스택.\n\n이름에 같은 모델 패밀리가 쓰여도, **에이전트 Harness와 주입 맥락**이 다르면 체감 품질·스타일·행동은 달라집니다.\n\n### 실무 체크리스트\n\n- \"같은 모델인가?\" → API 요청 로그의 **model ID**를 확인하세요.\n- \"왜 답이 다르지?\" → system prompt, RAG 청크, tool 목록, temperature를 diff하세요.\n- 제품 간 품질을 비교할 때는 **Evaluation** 시나리오를 고정하고, 맥락·도구까지 통제한 뒤 비교하세요.\n\n### 같이 보면 좋은 용어\n\n**LLM**, **Prompt**, **Tool Use**, **AI Agent**, **Harness**, **Skills**, **MCP**, **Memory**, **RAG**\n"
+    "same-model-across-products": "---\nid: same-model-across-products\n---\n\n### 핵심 답변\n\n**결론부터 말하면, 제품이 다르면 보통 결과도 다릅니다.** Claude(챗), Codex(코딩 에이전트), Cursor Agent처럼 이름이 달라 보이는 이유는, 겉에 **LLM**만 있는 게 아니라 **Prompt·도구·맥락·Harness**가 제품마다 다르게 붙어 있기 때문입니다.\n\n이론적으로는 **같은 모델 ID**, **같은 `messages`**, **같은 `temperature`·`max_tokens`**로 API를 직접 호출하면 생성 문장이 매우 비슷해질 수 있습니다. 하지만 우리가 일상에서 쓰는 제품 UI는 그 조건을 맞춰 주지 않습니다. 시스템 지시, 열린 파일, 대화 기록, 사용 가능한 Tool 목록이 자동으로 달라지기 때문에 **체감 답변은 거의 항상 다릅니다.**\n\n### \"같은 모델\"이란 무엇인가\n\n여기서 말하는 \"같다\"는 **UI에 보이는 제품 이름**이 아니라, API 요청에 들어가는 **모델 ID 문자열**이 같다는 뜻입니다.\n\n- 예: `claude-sonnet-4-20250514`처럼 벤더가 정한 정확한 이름\n- \"Sonnet\", \"Claude 4\" 같은 **마케팅 이름**만 같다고 해서 백엔드가 동일하다고 보장되지는 않습니다\n- 제품·리전·시점에 따라 **실제로는 다른 버전**이 라우팅될 수 있습니다\n\n같은 모델인지 확인하려면 개발자 도구, API 로그, Observability trace에서 `model` 필드를 직접 비교하는 것이 가장 확실합니다.\n\n### 무엇이 같아야 \"비슷한\" 결과인가\n\n아래가 **전부** 같을 때, 순수 LLM 생성만 놓고 보면 가장 가깝습니다.\n\n| 항목 | 설명 |\n|------|------|\n| 모델 ID | 완전히 동일한 문자열 |\n| messages | system + user + assistant 히스토리 내용 동일 |\n| 샘플링 | `temperature`, `top_p` 등 동일 |\n| 부가 입력 | Tool 정의, RAG 청크, 이미지 유무 동일 |\n| Tool 실행 결과 | Agent가 아닌 **단일 completion** 호출 |\n\n실제 제품은 위 표의 오른쪽 열(맥락·Tool·Harness)이 제품마다 다르게 채워집니다. 그래서 \"같은 질문을 했는데\"라고 느껴도 **모델에 들어간 전체 입력**은 다를 수밖에 없습니다.\n\n### 제품마다 결과가 달라지는 이유 (구체적으로)\n\n1. **System Prompt·정책**\n   - 챗 앱: 짧고 친절하게, 안전 정책 강조.\n   - IDE Agent: 코드 스타일, 프로젝트 규칙, diff 형식으로 답하라는 지시.\n   - 같은 User Prompt라도 **역할 정의**가 다르면 문장 길이·구조·톤이 바뀝니다.\n\n2. **맥락 주입 (가장 흔한 차이)**\n   - **Cursor**: 현재 열린 파일, 커서 위치, `@`로 지정한 심볼, `.cursor/rules` 등이 **Prompt**에 붙습니다.\n   - **Codex / 코딩 에이전트**: 리포지토리 트리, PR, CI 로그, 터미널 출력이 붙을 수 있습니다.\n   - **Claude 웹/API**: 대화 히스토리·첨부 문서 위주, IDE 파일 트리는 기본적으로 없습니다.\n   - **Memory**·**RAG** 소스가 다르면 모델이 참고하는 \"사실\" 자체가 달라집니다.\n\n3. **Tool Use·Skills·MCP**\n   - Agent 제품은 \"바로 답하기\" vs \"파일 읽고 → 검색하고 → 수정하기\" 경로가 다릅니다.\n   - Cursor는 파일 편집·터미널·MCP 서버, Codex는 GitHub·샌드박스 실행 등 **도구 세트**가 다릅니다.\n   - 모델이 Tool을 쓰면 **중간 LLM 호출**이 추가되고, 최종 답은 Tool 결과에 크게 좌우됩니다.\n\n4. **Harness (실행·안전·재시도)**\n   - **Sandbox**에서만 명령 실행, **Guardrails**로 위험 호출 차단, **HITL** 승인 후 진행.\n   - 재시도·폴백 모델·타임아웃 정책이 다르면 \"같은 질문\"도 다른 코드·다른 파일이 수정될 수 있습니다.\n\n5. **라우팅·버전**\n   - UI에는 \"Sonnet\"만 보여도 실제 요청은 다른 스냅샷·리전·폴백 모델로 갈 수 있습니다.\n   - 트래픽·플랜·A/B 테스트로 백엔드가 바뀌는 경우도 있습니다.\n\n### 같은 질문, 다른 제품 — 예시\n\n질문: *\"이 함수가 왜 NullPointerException이 나요?\"*\n\n| 제품 | 모델에 실제로 들어갈 수 있는 것 | 답이 달라지는 이유 |\n|------|----------------------------------|-------------------|\n| Claude 챗 | 질문 텍스트 + (선택) 붙인 파일 | 스택 트레이스·프로젝트 구조 없으면 일반론적 답 |\n| Cursor Agent | 질문 + 열린 파일 전체 + 관련 심볼 | 해당 파일 기준으로 줄 번호·변수 추적 가능 |\n| Codex(리포 맥락) | 질문 + repo 검색 결과 + PR/CI | 여러 파일 관계까지 볼 수 있음 |\n| Raw API | 개발자가 넣은 `messages`만 | 넣은 만큼만 앎 |\n\n**User Prompt 문장은 같아도**, 모델이 보는 **전체 입력**이 다르면 답은 달라지는 것이 정상입니다.\n\n### Claude vs Codex vs Cursor (한눈에)\n\n- **Claude**(챗·문서·API) — 대화·분석·글쓰기. 맥락은 대화·첨부 중심. 코딩도 가능하지만 IDE 파일 트리는 기본 제공 안 함.\n- **Codex**(코딩 에이전트) — 리포지토리·PR·터미널과 **Tool Use** 루프에 최적화된 **AI Agent**.\n- **Cursor Agent** — IDE 안에서 파일·심볼·규칙을 자동 주입하고, 편집·검색·MCP를 쓰는 **AI Agent**.\n\n이름에 같은 모델 패밀리(예: Claude Sonnet)가 쓰여도, **제품 = 모델 + Prompt + Tool + Harness** 묶음이라고 보면 이해하기 쉽습니다.\n\n### 자주 헷갈리는 점\n\n- **\"같은 모델 썼는데 왜 코드가 다르지?\"** — 샘플링(`temperature` > 0)만으로도 문장·변수명이 조금씩 달라질 수 있습니다. Agent는 Tool 실행 결과까지 달라지면 차이가 더 큽니다.\n- **\"Claude에서 잘 됐는데 Cursor에서는 안 돼\"** — System Prompt, 규칙 파일, 주입 맥락, Tool 권한을 먼저 의심하세요. 모델 탓만 하기 어렵습니다.\n- **\"API로는 되는데 제품 UI에서는 안 됨\"** — UI가 맥락·도구·길이 제한을 더 강하게 걸거나, 다른 모델로 라우팅했을 수 있습니다.\n- **완전 동일 출력 기대** — 연구·회귀 테스트가 아니라면 \"비슷한 품질\"을 목표로 하는 편이 현실적입니다.\n\n### 실무 체크리스트\n\n1. **같은 모델인가?** — 로그의 `model` ID 문자열을 제품 간 diff.\n2. **같은 입력인가?** — system, user, tool 목록, RAG 청크, 이미지를 diff. User 한 줄만 같다고 입력이 같지 않습니다.\n3. **Agent 루프인가?** — Tool 호출 횟수·중간 `tool_result`가 있으면 단순 채팅과 비교하면 안 됩니다.\n4. **제품 간 비교할 때** — 질문·파일·규칙·도구를 고정한 **Evaluation** 시나리오를 만들고, 한 변수씩만 바꿔 테스트하세요.\n5. **품질 이슈 보고할 때** — \"모델이 이상하다\"보다 \"어떤 맥락·어떤 Tool이 붙었는지\"를 함께 적으면 재현이 빨라집니다.\n\n### 같이 보면 좋은 용어\n\n**LLM**, **Prompt**, **Tool Use**, **AI Agent**, **Harness**, **Skills**, **MCP**, **Memory**, **RAG**, **Token**, **Context Window**, **Guardrails**, **Sandbox**, **Evaluation**\n"
   }
 };

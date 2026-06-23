@@ -154,11 +154,7 @@ function stripFrontmatter(raw) {
 function initMarked() {
   if (markedReady) return typeof marked !== "undefined";
   if (typeof marked === "undefined") return false;
-  marked.setOptions({
-    gfm: true,
-    headerIds: false,
-    mangle: false,
-  });
+  marked.use({ gfm: true });
   markedReady = true;
   return true;
 }
@@ -256,7 +252,7 @@ function renderMarkdownContent(raw, linkableIds, container, options = {}) {
   if (!initMarked()) {
     const fallback = document.createElement("p");
     fallback.className = "desc-error";
-    fallback.textContent = "마크다운 렌더러를 불러오지 못했습니다. 네트워크 연결을 확인해 주세요.";
+    fallback.textContent = "마크다운 렌더러(marked)를 불러오지 못했습니다.";
     container.appendChild(fallback);
     return;
   }
@@ -464,6 +460,118 @@ function renderEvidenceItem(text, container) {
     note.textContent = after;
     container.appendChild(note);
   }
+}
+
+// ==========================================================================
+// Connection tag chips (2-line preview + hover popover)
+// ==========================================================================
+function createConnectionTagBtn(connId) {
+  const connectedTerm = glossaryById.get(connId);
+  if (!connectedTerm) return null;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "tag-btn";
+  const dotColor = categoryMeta[connectedTerm.category].color;
+  btn.innerHTML = `
+    <span class="tag-dot" style="background-color: ${dotColor}"></span>
+    ${connectedTerm.name}
+  `;
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    selectTerm(connId);
+  });
+  return btn;
+}
+
+function renderConnectionTags(connectionIds, wrapEl) {
+  if (!wrapEl) return;
+
+  const previewEl = wrapEl.querySelector(".connection-tags-preview");
+  const popoverBodyEl = wrapEl.querySelector(".connection-tags-popover-body");
+  const popoverEl = wrapEl.querySelector(".connection-tags-popover");
+  if (!previewEl || !popoverBodyEl) return;
+
+  previewEl.replaceChildren();
+  popoverBodyEl.replaceChildren();
+
+  const validIds = connectionIds.filter((id) => glossaryById.has(id));
+  validIds.forEach((connId) => {
+    const previewBtn = createConnectionTagBtn(connId);
+    const popoverBtn = createConnectionTagBtn(connId);
+    if (previewBtn) previewEl.appendChild(previewBtn);
+    if (popoverBtn) popoverBodyEl.appendChild(popoverBtn);
+  });
+
+  if (popoverEl) {
+    popoverEl.classList.toggle("is-empty", validIds.length === 0);
+  }
+  wrapEl.classList.toggle("has-connections", validIds.length > 0);
+  setupConnectionPopover(wrapEl);
+}
+
+function positionConnectionPopover(wrapEl) {
+  const popoverEl = wrapEl.querySelector(".connection-tags-popover");
+  if (!popoverEl || popoverEl.classList.contains("is-empty")) return;
+
+  const rect = wrapEl.getBoundingClientRect();
+  const gap = 2;
+  const margin = 8;
+  const maxPopoverHeight = Math.min(window.innerHeight * 0.5, 352);
+
+  popoverEl.style.maxHeight = `${maxPopoverHeight}px`;
+
+  let top = rect.bottom + gap;
+  const popoverHeight = popoverEl.offsetHeight || maxPopoverHeight;
+  if (top + popoverHeight > window.innerHeight - margin) {
+    top = Math.max(margin, rect.top - gap - popoverHeight);
+  }
+
+  let right = window.innerWidth - rect.right;
+  right = Math.max(margin, Math.min(right, window.innerWidth - margin - 224));
+
+  popoverEl.style.top = `${top}px`;
+  popoverEl.style.right = `${right}px`;
+  popoverEl.style.left = "auto";
+  popoverEl.style.width = `${Math.min(Math.max(rect.width, 224), window.innerWidth - margin * 2)}px`;
+}
+
+function setupConnectionPopover(wrapEl) {
+  if (wrapEl.dataset.popoverBound === "true") return;
+  wrapEl.dataset.popoverBound = "true";
+  wrapEl.setAttribute("tabindex", "0");
+
+  let hideTimer = null;
+
+  const open = () => {
+    if (hideTimer) {
+      clearTimeout(hideTimer);
+      hideTimer = null;
+    }
+    wrapEl.classList.add("is-popover-open");
+    requestAnimationFrame(() => positionConnectionPopover(wrapEl));
+  };
+
+  const scheduleClose = () => {
+    hideTimer = setTimeout(() => {
+      wrapEl.classList.remove("is-popover-open");
+      hideTimer = null;
+    }, 120);
+  };
+
+  wrapEl.addEventListener("mouseenter", open);
+  wrapEl.addEventListener("mouseleave", scheduleClose);
+  wrapEl.addEventListener("focusin", open);
+  wrapEl.addEventListener("focusout", (e) => {
+    if (wrapEl.contains(e.relatedTarget)) return;
+    scheduleClose();
+  });
+
+  window.addEventListener("resize", () => {
+    if (wrapEl.classList.contains("is-popover-open")) {
+      positionConnectionPopover(wrapEl);
+    }
+  });
 }
 
 // ==========================================================================
@@ -1114,32 +1222,7 @@ function selectQna(id) {
       bodyEl.appendChild(err);
     });
 
-  const row1El = document.getElementById("qna-related-row-1");
-  const row2El = document.getElementById("qna-related-row-2");
-  row1El.innerHTML = "";
-  row2El.innerHTML = "";
-
-  const relatedIds = (item.relatedTerms || []).filter((tid) => glossaryById.has(tid));
-  const splitAt = Math.ceil(relatedIds.length / 2);
-  const rows = [relatedIds.slice(0, splitAt), relatedIds.slice(splitAt)];
-
-  rows.forEach((ids, rowIndex) => {
-    const container = rowIndex === 0 ? row1El : row2El;
-    ids.forEach((termId) => {
-      const term = glossaryById.get(termId);
-      if (!term) return;
-
-      const btn = document.createElement("button");
-      btn.className = "tag-btn";
-      const dotColor = categoryMeta[term.category].color;
-      btn.innerHTML = `
-        <span class="tag-dot" style="background-color: ${dotColor}"></span>
-        ${term.name}
-      `;
-      btn.addEventListener("click", () => selectTerm(termId));
-      container.appendChild(btn);
-    });
-  });
+  renderConnectionTags(item.relatedTerms || [], document.getElementById("qna-related-wrap"));
 
   const listElement = document.querySelector(`.term-item[data-id="${id}"]`);
   if (listElement) {
@@ -1271,32 +1354,7 @@ function selectTerm(id) {
       renderExample(null, id, term.connections, exampleEl);
     });
 
-  const row1El = document.getElementById("detail-connections-row-1");
-  const row2El = document.getElementById("detail-connections-row-2");
-  row1El.innerHTML = "";
-  row2El.innerHTML = "";
-
-  const connectionIds = term.connections.filter((connId) => glossaryById.has(connId));
-  const splitAt = Math.ceil(connectionIds.length / 2);
-  const rows = [connectionIds.slice(0, splitAt), connectionIds.slice(splitAt)];
-
-  rows.forEach((ids, rowIndex) => {
-    const container = rowIndex === 0 ? row1El : row2El;
-    ids.forEach((connId) => {
-      const connectedTerm = glossaryById.get(connId);
-      if (!connectedTerm) return;
-
-      const btn = document.createElement("button");
-      btn.className = "tag-btn";
-      const dotColor = categoryMeta[connectedTerm.category].color;
-      btn.innerHTML = `
-      <span class="tag-dot" style="background-color: ${dotColor}"></span>
-      ${connectedTerm.name}
-    `;
-      btn.addEventListener("click", () => selectTerm(connId));
-      container.appendChild(btn);
-    });
-  });
+  renderConnectionTags(term.connections, document.getElementById("detail-connections-wrap"));
 
   const listElement = document.querySelector(`.term-item[data-id="${id}"]`);
   if (listElement) {

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
+const { rebuildConnections } = require("./rebuild-connections");
 
 const root = path.resolve(__dirname, "..");
 const indexPath = path.join(root, "data", "glossary-index.json");
@@ -10,7 +11,7 @@ const qnaDir = path.join(root, "content", "qna");
 const examplesDir = path.join(root, "content", "examples");
 const outPath = path.join(root, "glossary-bundle.js");
 
-const index = JSON.parse(fs.readFileSync(indexPath, "utf8"));
+const index = rebuildConnections(indexPath);
 const qnaIndex = JSON.parse(fs.readFileSync(qnaIndexPath, "utf8"));
 const descriptions = {};
 const examples = {};

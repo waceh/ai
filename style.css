@@ -677,10 +677,13 @@ body.graph-modal-open {
   padding-bottom: 0.75rem;
 }
 
-#detail-category {
+#detail-category,
+#qna-detail-category {
   grid-area: badge;
   align-self: start;
   justify-self: start;
+  width: fit-content;
+  max-width: 100%;
 }
 
 .definition-section {
@@ -709,6 +712,8 @@ body.graph-modal-open {
 
 .category-badge {
   display: inline-block;
+  width: fit-content;
+  max-width: 100%;
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.25rem 0.6rem;
@@ -1080,27 +1085,88 @@ body.graph-modal-open {
   line-height: 1.2;
 }
 
-.connection-tags-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0.35rem 0.4rem;
+.connection-tags-wrap {
+  position: relative;
+  grid-area: tags1 / tags1 / tags2 / tags2;
+  justify-self: end;
+  align-self: center;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
 }
 
-#detail-connections-row-1 {
-  grid-area: tags1;
-  align-self: end;
+.connection-tags-preview {
+  --connection-tag-line-height: 1.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-content: flex-start;
+  gap: 0.35rem 0.4rem;
+  max-height: calc(var(--connection-tag-line-height) * 2 + 0.35rem);
+  overflow: hidden;
 }
 
-#detail-connections-row-2 {
-  grid-area: tags2;
-  align-self: start;
+.connection-tags-popover {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1200;
+  min-width: 14rem;
+  max-width: min(32rem, 92vw);
+  overflow: auto;
+  padding: 0.65rem 0.75rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+}
+
+.connection-tags-popover::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.45rem;
+  height: 0.45rem;
+}
+
+.connection-tags-popover.is-empty {
+  display: none;
+}
+
+.connection-tags-popover-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: right;
+}
+
+.connection-tags-popover-body {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem 0.4rem;
+}
+
+.connection-tags-wrap.has-connections.is-popover-open .connection-tags-popover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .connections-section .tag-btn,
-.connection-tags-row .tag-btn {
+.connection-tags-preview .tag-btn,
+.connection-tags-popover-body .tag-btn {
   font-size: 0.78rem;
   padding: 0.28rem 0.62rem;
 }
@@ -1122,13 +1188,19 @@ body.graph-modal-open {
     align-self: start;
   }
 
-  #detail-connections-row-1,
-  #detail-connections-row-2 {
+  .connection-tags-wrap {
+    justify-self: stretch;
     align-self: stretch;
   }
 
-  .connection-tags-row {
+  .connection-tags-preview,
+  .connection-tags-popover-body {
     justify-content: flex-start;
+  }
+
+  .connection-tags-popover {
+    right: auto;
+    left: 0;
   }
 }
 
