@@ -2,14 +2,26 @@
 id: hitl
 ---
 
-## 개요
+### 개요
 
-HITL(Human-in-the-Loop)은 에이전트가 자율 실행하되, 특정 시점에 사람의 판단·승인을 끼워 넣는 제어 방식입니다. 범용 프로토콜 이름은 확인되지 않았습니다.
+HITL(Human-in-the-Loop)은 **Harness** 루프에서 고위험 **Tool Use** 전 사람 승인·거부를 받는 체크포인트입니다. **Guardrails**만으로는 비즈니스 맥락·예외를 모두 자동 판단하기 어렵습니다.
 
-## 세부 내용
+비유하면, HITL은 "중요 서명 전 최종 확인"입니다. Agent가 Tool Use를 선언하면 Harness·Guardrails가 위험 등급을 판단하고, 필요 시 UI·알림으로 사람에게 넘깁니다.
 
-Anthropic agent 문서는 실행 중 checkpoint에서 human feedback을 받거나 blocker에서 멈추는 흐름을 설명합니다. Harness 정책으로 고위험 Tool Use(배포·결제·대량 삭제 등) 직전에 확인 UI를 두는 패턴이 제품별로 구현됩니다. Guardrails가 자동 차단한 경우와 사람이 예외 승인하는 경우를 구분합니다.
+유의사항: HITL ≠ Guardrails입니다. Guardrails는 규칙 자동 검사, HITL은 사람이 맥락을 보고 결정합니다. NanoClaw 등 보안 프레임워크는 HITL을 기본 시나리오로 다룹니다.
 
-## 검증 근거
+### 사용목적
+
+Guardrails만으로는 비즈니스 맥락·예외를 모두 자동 판단하기 어렵습니다. Harness는 HITL 체크포인트에서 Tool Use를 일시 정지하고 승인 후 재개합니다.
+
+### 동작/구조
+
+Agent가 Tool Use 선언 → Harness·Guardrails가 위험 등급 판단 → HITL 필요 시 UI·알림으로 사람에게 전달 → 승인 시 Sandbox에서 실행, 거부 시 취소 또는 대안 Planning. NanoClaw 등 보안 프레임워크는 HITL을 기본 시나리오로 다룹니다.
+
+- **Harness**: HITL 체크포인트를 루프에 삽입
+- **Guardrails**: HITL이 필요한 Tool Use를 분류
+- **Tool Use**: HITL 승인 대상이 되는 Agent 행동
+
+## 참고
 
 - Anthropic, "Building effective agents" — human feedback at checkpoints: https://www.anthropic.com/engineering/building-effective-agents

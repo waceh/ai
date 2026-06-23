@@ -2,15 +2,27 @@
 id: fine-tuning
 ---
 
-## 개요
+### 개요
 
-Fine-tuning은 사전 학습된 모델 가중치를 추가 데이터로 조정하는 방법입니다. 제공사 API·문서에 fine-tuning 엔드포인트·절차가 정의되어 있습니다.
+Fine-tuning은 **LLM** 가중치를 특정 도메인·스타일·**Tool Use** JSON 형식에 맞게 추가 학습하는 과정입니다. 긴 **Prompt**·**RAG**만으로 브랜드 톤·특수 분류가 불안정할 때 고려합니다.
 
-## 세부 내용
+비유하면, Fine-tuning은 "이미 대학 나온 사람에게 회사 업무 교육"입니다. 예시 데이터(입력 Prompt → 기대 출력)로 모델 행동을 조정하고, **Evaluation**으로 전후 **AI Agent**·**Planning** 품질을 비교합니다.
 
-Prompt·RAG만으로 부족할 때 도메인 데이터로 LLM을 조정합니다. Tool Use 형식·Planning 패턴을 데이터에 넣어 AI Agent 행동을 안정화할 수 있으나, 데이터 준비·Evaluation·재학습 비용이 듭니다. 구체 API 이름·파라미터는 사용 중인 모델 벤더 문서를 따릅니다.
+유의사항: Fine-tuning ≠ RAG입니다. Fine-tuning은 모델 자체를 바꾸고, RAG는 검색으로 런타임 컨텍스트를 넣습니다. Prompt는 Fine-tuning과 complementary한 런타임 지시로 남습니다.
 
-## 검증 근거
+### 사용목적
+
+긴 Prompt·RAG만으로 Tool Use JSON 형식·브랜드 톤·특수 분류가 불안정할 때 Fine-tuning을 고려합니다. Evaluation으로 Fine-tuning 전후 Agent·Planning 품질을 비교합니다.
+
+### 동작/구조
+
+예시 데이터(입력 Prompt → 기대 출력, Tool Use 포함 가능) 수집 → 벤더 Fine-tuning job → 새 모델 ID → AI Agent·Harness에서 해당 LLM으로 교체 → Evaluation·Observability로 회귀 확인.
+
+- **LLM**: Fine-tuning 대상 모델
+- **Prompt**: Fine-tuning과 complementary인 런타임 지시
+- **Evaluation**: Fine-tuning 효과·회귀 측정
+- **Tool Use**: Fine-tuning 예시에 함수 호출 형식 포함 가능
+
+## 참고
 
 - OpenAI fine-tuning 문서(벤더별): https://platform.openai.com/docs/guides/fine-tuning
-- Anthropic 모델·학습 관련 안내는 제품 문서 별도 확인 필요 — 통합 "Harness fine-tuning" 표준은 없음

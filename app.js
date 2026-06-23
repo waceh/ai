@@ -6,11 +6,17 @@ const glossaryById = new Map();
 const descriptionCache = new Map();
 const descriptionPlainCache = new Map();
 const CONTENT_BASE = "content/terms";
+const EXAMPLES_BASE = "content/examples";
+
+const exampleCache = new Map();
 
 function cacheDescription(id, raw) {
   const blocks = parseTermMarkdown(raw);
   descriptionCache.set(id, blocks);
-  descriptionPlainCache.set(id, blocks.map((b) => b.text).join("\n"));
+  descriptionPlainCache.set(
+    id,
+    blocks.map((b) => b.text).filter(Boolean).join("\n")
+  );
   return blocks;
 }
 
@@ -32,6 +38,11 @@ function initGlossaryFromBundle() {
   if (bundle.descriptions) {
     Object.entries(bundle.descriptions).forEach(([id, raw]) => {
       cacheDescription(id, raw);
+    });
+  }
+  if (bundle.examples) {
+    Object.entries(bundle.examples).forEach(([id, raw]) => {
+      exampleCache.set(id, raw);
     });
   }
   return true;
@@ -93,6 +104,12 @@ function parseTermMarkdown(raw) {
     if (trimmed.startsWith("## ")) {
       flushParagraph();
       blocks.push({ type: "h2", text: trimmed.slice(3).trim() });
+    } else if (trimmed.startsWith("### ")) {
+      flushParagraph();
+      blocks.push({ type: "h3", text: trimmed.slice(4).trim() });
+    } else if (trimmed.startsWith("- ")) {
+      flushParagraph();
+      blocks.push({ type: "li", text: trimmed.slice(2).trim() });
     } else if (trimmed === "") {
       flushParagraph();
     } else {
@@ -101,6 +118,168 @@ function parseTermMarkdown(raw) {
   }
   flushParagraph();
   return blocks.length ? blocks : [{ type: "p", text: body }];
+}
+
+async function loadTermExample(id) {
+  if (exampleCache.has(id)) return exampleCache.get(id);
+
+  const bundled = window.__GLOSSARY__?.examples?.[id];
+  if (bundled) {
+    exampleCache.set(id, bundled);
+    return bundled;
+  }
+
+  const res = await fetch(`${EXAMPLES_BASE}/${id}.md`);
+  if (!res.ok) return null;
+  const raw = await res.text();
+  exampleCache.set(id, raw);
+  return raw;
+}
+
+function parseExampleFrontmatter(raw) {
+  let body = raw.trim();
+  const meta = { status: "draft", title: "", source: "" };
+
+  if (body.startsWith("---")) {
+    const end = body.indexOf("---", 3);
+    if (end !== -1) {
+      const front = body.slice(3, end).trim();
+      body = body.slice(end + 3).trim();
+      front.split("\n").forEach((line) => {
+        const colon = line.indexOf(":");
+        if (colon === -1) return;
+        const key = line.slice(0, colon).trim();
+        let value = line.slice(colon + 1).trim();
+        if (
+          (value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))
+        ) {
+          value = value.slice(1, -1);
+        }
+        if (key in meta) meta[key] = value;
+      });
+    }
+  }
+
+  return { meta, body };
+}
+
+function isExampleReady(meta, body) {
+  if (meta.status === "ready") return true;
+  const stripped = body
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\(작성 예정\)/g, "")
+    .replace(/# 예시 코드 또는 명령 \(작성 예정\)/g, "")
+    .trim();
+  const withoutHeadings = stripped.replace(/^#+\s.*$/gm, "").trim();
+  return withoutHeadings.length > 80;
+}
+
+function appendRichText(text, linkableIds, container) {
+  if (!text) return;
+
+  const fenceRe = /```(\w*)\n([\s\S]*?)```/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = fenceRe.exec(text)) !== null) {
+    const before = text.slice(lastIndex, match.index).trim();
+    if (before) {
+      const p = document.createElement("p");
+      p.className = "desc-paragraph";
+      renderLinkedText(before, linkableIds, p);
+      container.appendChild(p);
+    }
+
+    const pre = document.createElement("pre");
+    pre.className = "example-code";
+    const code = document.createElement("code");
+    if (match[1]) code.className = `language-${match[1]}`;
+    code.textContent = match[2].replace(/\n$/, "");
+    pre.appendChild(code);
+    container.appendChild(pre);
+
+    lastIndex = fenceRe.lastIndex;
+  }
+
+  const tail = text.slice(lastIndex).trim();
+  if (tail) {
+    const p = document.createElement("p");
+    p.className = "desc-paragraph";
+    renderLinkedText(tail, linkableIds, p);
+    container.appendChild(p);
+  }
+}
+
+function renderExample(raw, termId, linkableIds, container) {
+  container.replaceChildren();
+
+  if (!raw) {
+    const box = document.createElement("div");
+    box.className = "example-placeholder";
+    box.innerHTML = `<p>예시 파일이 없습니다.</p><p class="example-placeholder-hint"><code>content/examples/${termId}.md</code>를 생성하세요.</p>`;
+    container.appendChild(box);
+    return;
+  }
+
+  const { meta, body } = parseExampleFrontmatter(raw);
+
+  if (!isExampleReady(meta, body)) {
+    const box = document.createElement("div");
+    box.className = "example-placeholder";
+    box.innerHTML = `
+      <p>이 용어의 실무 예시를 준비 중입니다.</p>
+      <p class="example-placeholder-hint"><code>content/examples/${termId}.md</code>에 시나리오·코드·단계를 작성한 뒤 frontmatter <code>status: ready</code>로 변경하세요.</p>
+    `;
+    container.appendChild(box);
+    return;
+  }
+
+  if (meta.title) {
+    const title = document.createElement("p");
+    title.className = "example-title";
+    title.textContent = meta.title;
+    container.appendChild(title);
+  }
+
+  const blocks = parseTermMarkdown(body);
+  blocks.forEach((block) => {
+    if (block.type === "h2") {
+      const heading = document.createElement("h4");
+      heading.className = "example-section-title";
+      heading.textContent = block.text;
+      container.appendChild(heading);
+    } else if (block.type === "h3") {
+      const heading = document.createElement("h5");
+      heading.className = "example-subsection-title";
+      heading.textContent = block.text;
+      container.appendChild(heading);
+    } else if (block.type === "li") {
+      const item = document.createElement("div");
+      item.className = "example-list-item";
+      renderLinkedText(block.text, linkableIds, item);
+      container.appendChild(item);
+    } else {
+      appendRichText(block.text, linkableIds, container);
+    }
+  });
+
+  if (meta.source) {
+    const src = document.createElement("p");
+    src.className = "example-source";
+    if (/^https?:\/\//.test(meta.source)) {
+      const a = document.createElement("a");
+      a.href = meta.source;
+      a.textContent = meta.source;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      src.append("출처: ");
+      src.appendChild(a);
+    } else {
+      src.textContent = `출처: ${meta.source}`;
+    }
+    container.appendChild(src);
+  }
 }
 
 async function loadTermDescription(id) {
@@ -128,19 +307,109 @@ function preloadAllDescriptions() {
 
 function renderLinkedBlocks(blocks, linkableIds, container) {
   container.replaceChildren();
+  let inEvidence = false;
+  let evidenceList = null;
+  let generalList = null;
+
+  const flushEvidenceList = () => {
+    if (evidenceList) {
+      container.appendChild(evidenceList);
+      evidenceList = null;
+    }
+  };
+
+  const flushGeneralList = () => {
+    if (generalList) {
+      container.appendChild(generalList);
+      generalList = null;
+    }
+  };
+
+  const flushLists = () => {
+    flushEvidenceList();
+    flushGeneralList();
+  };
+
   blocks.forEach((block) => {
     if (block.type === "h2") {
+      flushLists();
+      inEvidence = block.text === "참고";
       const heading = document.createElement("h4");
       heading.className = "desc-section-title";
       heading.textContent = block.text;
       container.appendChild(heading);
+    } else if (block.type === "h3") {
+      flushLists();
+      inEvidence = false;
+      const heading = document.createElement("h5");
+      heading.className = "desc-subsection-title";
+      heading.textContent = block.text;
+      container.appendChild(heading);
+    } else if (block.type === "li" && inEvidence) {
+      flushGeneralList();
+      if (!evidenceList) {
+        evidenceList = document.createElement("ul");
+        evidenceList.className = "evidence-list";
+      }
+      const item = document.createElement("li");
+      renderEvidenceItem(block.text, item);
+      evidenceList.appendChild(item);
+    } else if (block.type === "li") {
+      flushEvidenceList();
+      if (!generalList) {
+        generalList = document.createElement("ul");
+        generalList.className = "desc-bullet-list";
+      }
+      const item = document.createElement("li");
+      renderLinkedText(block.text, linkableIds, item);
+      generalList.appendChild(item);
     } else {
+      flushLists();
+      inEvidence = false;
       const paragraph = document.createElement("p");
       paragraph.className = "desc-paragraph";
       renderLinkedText(block.text, linkableIds, paragraph);
       container.appendChild(paragraph);
     }
   });
+
+  flushLists();
+}
+
+const EVIDENCE_URL_RE = /(https?:\/\/[^\s)]+)/;
+
+function renderEvidenceItem(text, container) {
+  const match = text.match(EVIDENCE_URL_RE);
+  if (!match) {
+    container.textContent = text;
+    return;
+  }
+
+  const url = match[1].replace(/[.,;]+$/, "");
+  const before = text.slice(0, match.index).replace(/:\s*$/, "").trim();
+  const after = text.slice(match.index + match[0].length).replace(/^\s*[—–-]\s*/, "").trim();
+
+  if (before) {
+    const label = document.createElement("span");
+    label.className = "evidence-label";
+    label.textContent = before;
+    container.appendChild(label);
+  }
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.textContent = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.className = "evidence-link";
+  container.appendChild(link);
+
+  if (after) {
+    const note = document.createElement("span");
+    note.className = "evidence-note";
+    note.textContent = after;
+    container.appendChild(note);
+  }
 }
 
 // ==========================================================================
@@ -308,6 +577,7 @@ function initUI() {
 
   initCategoryTabsDrag();
   initGraphModal(openGraphBtn, closeGraphBtn, graphBackdrop);
+  initPanelResizer();
   // Search
   searchInput.addEventListener("input", (e) => {
     searchQuery = e.target.value.toLowerCase().trim();
@@ -333,6 +603,119 @@ function initUI() {
     syncGraphSelection();
     requestRedraw();
   });
+}
+
+const SIDEBAR_WIDTH_STORAGE_KEY = "glossary-sidebar-width";
+const SIDEBAR_MIN_PX = 200;
+const SIDEBAR_MAX_PX = 480;
+const SIDEBAR_STEP_PX = 12;
+
+function clampSidebarWidth(px) {
+  return Math.min(SIDEBAR_MAX_PX, Math.max(SIDEBAR_MIN_PX, px));
+}
+
+function getSidebarWidthPx() {
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue("--sidebar-width")
+    .trim();
+  const parsed = parseFloat(raw);
+  return Number.isFinite(parsed) ? clampSidebarWidth(parsed) : 260;
+}
+
+function setSidebarWidth(px, { persist = true, markCustom = true } = {}) {
+  const width = clampSidebarWidth(px);
+  document.documentElement.style.setProperty("--sidebar-width", `${width}px`);
+  if (markCustom) {
+    document.documentElement.dataset.sidebarCustom = "true";
+  }
+  if (persist) {
+    localStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY, String(width));
+  }
+  return width;
+}
+
+function resetSidebarWidth() {
+  localStorage.removeItem(SIDEBAR_WIDTH_STORAGE_KEY);
+  document.documentElement.style.removeProperty("--sidebar-width");
+  delete document.documentElement.dataset.sidebarCustom;
+}
+
+function initPanelResizer() {
+  const resizer = document.getElementById("panel-resizer");
+  const appMain = document.querySelector(".app-main");
+  if (!resizer || !appMain) return;
+
+  const mobileQuery = window.matchMedia("(max-width: 1024px)");
+
+  const updateResizerVisibility = () => {
+    resizer.hidden = mobileQuery.matches;
+  };
+
+  const saved = localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY);
+  if (saved) {
+    const parsed = Number(saved);
+    if (Number.isFinite(parsed)) {
+      const width = setSidebarWidth(parsed, { persist: false });
+      resizer.setAttribute("aria-valuenow", String(width));
+    }
+  }
+
+  updateResizerVisibility();
+  mobileQuery.addEventListener("change", updateResizerVisibility);
+
+  let dragging = false;
+
+  const onPointerMove = (e) => {
+    if (!dragging) return;
+    const rect = appMain.getBoundingClientRect();
+    const width = setSidebarWidth(e.clientX - rect.left, { persist: false });
+    resizer.setAttribute("aria-valuenow", String(width));
+  };
+
+  const stopDragging = () => {
+    if (!dragging) return;
+    dragging = false;
+    document.body.classList.remove("panel-resizing");
+    resizer.classList.remove("is-dragging");
+    setSidebarWidth(getSidebarWidthPx());
+    document.removeEventListener("pointermove", onPointerMove);
+    document.removeEventListener("pointerup", stopDragging);
+    document.removeEventListener("pointercancel", stopDragging);
+  };
+
+  resizer.addEventListener("pointerdown", (e) => {
+    if (mobileQuery.matches || e.button !== 0) return;
+    dragging = true;
+    resizer.setPointerCapture(e.pointerId);
+    document.body.classList.add("panel-resizing");
+    resizer.classList.add("is-dragging");
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", stopDragging);
+    document.addEventListener("pointercancel", stopDragging);
+    e.preventDefault();
+  });
+
+  resizer.addEventListener("keydown", (e) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+    let next = getSidebarWidthPx();
+    if (e.key === "ArrowLeft") next -= SIDEBAR_STEP_PX;
+    if (e.key === "ArrowRight") next += SIDEBAR_STEP_PX;
+    if (e.key === "Home") next = SIDEBAR_MIN_PX;
+    if (e.key === "End") next = SIDEBAR_MAX_PX;
+    const width = setSidebarWidth(next);
+    resizer.setAttribute("aria-valuenow", String(width));
+    e.preventDefault();
+  });
+
+  resizer.addEventListener("dblclick", () => {
+    resetSidebarWidth();
+    const width = getSidebarWidthPx();
+    resizer.setAttribute("aria-valuenow", String(width));
+  });
+
+  if (!resizer.getAttribute("aria-valuenow")) {
+    resizer.setAttribute("aria-valuenow", String(getSidebarWidthPx()));
+  }
 }
 
 function initGraphModal(openBtn, closeBtn, backdrop) {
@@ -517,22 +900,48 @@ function selectTerm(id) {
       descEl.appendChild(err);
     });
 
-  const tagsContainer = document.getElementById("detail-connections");
-  tagsContainer.innerHTML = "";
+  const exampleEl = document.getElementById("detail-example");
+  exampleEl.replaceChildren();
+  const exampleLoading = document.createElement("p");
+  exampleLoading.className = "desc-loading";
+  exampleLoading.textContent = "예시를 불러오는 중…";
+  exampleEl.appendChild(exampleLoading);
 
-  term.connections.forEach(connId => {
-    const connectedTerm = glossaryById.get(connId);
-    if (!connectedTerm) return;
+  loadTermExample(id)
+    .then((raw) => {
+      if (currentSelectedId !== id) return;
+      renderExample(raw, id, term.connections, exampleEl);
+    })
+    .catch(() => {
+      if (currentSelectedId !== id) return;
+      renderExample(null, id, term.connections, exampleEl);
+    });
 
-    const btn = document.createElement("button");
-    btn.className = "tag-btn";
-    const dotColor = categoryMeta[connectedTerm.category].color;
-    btn.innerHTML = `
+  const row1El = document.getElementById("detail-connections-row-1");
+  const row2El = document.getElementById("detail-connections-row-2");
+  row1El.innerHTML = "";
+  row2El.innerHTML = "";
+
+  const connectionIds = term.connections.filter((connId) => glossaryById.has(connId));
+  const splitAt = Math.ceil(connectionIds.length / 2);
+  const rows = [connectionIds.slice(0, splitAt), connectionIds.slice(splitAt)];
+
+  rows.forEach((ids, rowIndex) => {
+    const container = rowIndex === 0 ? row1El : row2El;
+    ids.forEach((connId) => {
+      const connectedTerm = glossaryById.get(connId);
+      if (!connectedTerm) return;
+
+      const btn = document.createElement("button");
+      btn.className = "tag-btn";
+      const dotColor = categoryMeta[connectedTerm.category].color;
+      btn.innerHTML = `
       <span class="tag-dot" style="background-color: ${dotColor}"></span>
       ${connectedTerm.name}
     `;
-    btn.addEventListener("click", () => selectTerm(connId));
-    tagsContainer.appendChild(btn);
+      btn.addEventListener("click", () => selectTerm(connId));
+      container.appendChild(btn);
+    });
   });
 
   const listElement = document.querySelector(`.term-item[data-id="${id}"]`);

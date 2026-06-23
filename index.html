@@ -46,6 +46,18 @@
         </div>
       </section>
 
+      <div
+        class="panel-resizer"
+        id="panel-resizer"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="용어 목록 너비 조절"
+        aria-valuemin="200"
+        aria-valuemax="480"
+        tabindex="0"
+        title="드래그하여 너비 조절 · 더블클릭으로 초기화"
+      ></div>
+
       <!-- Term Detail -->
       <section class="detail-card glass-card" id="detail-card">
         <div class="detail-placeholder" id="detail-placeholder">
@@ -55,10 +67,17 @@
           </p>
         </div>
         <div class="detail-content hidden" id="detail-content">
-          <div class="detail-header">
+          <div class="detail-top-bar">
             <span class="category-badge" id="detail-category">카테고리</span>
-            <h2 id="detail-title">용어명</h2>
-            <p class="english-title" id="detail-english-title">English Term Name</p>
+            <div class="detail-header">
+              <h2 id="detail-title">용어명</h2>
+              <p class="english-title" id="detail-english-title">English Term Name</p>
+            </div>
+            <div class="connections-section">
+              <p class="connections-label">연관된 용어</p>
+              <div class="connection-tags-row" id="detail-connections-row-1"></div>
+              <div class="connection-tags-row" id="detail-connections-row-2"></div>
+            </div>
           </div>
           
           <div class="definition-section">
@@ -71,11 +90,9 @@
             <div class="full-desc" id="detail-description"></div>
           </div>
 
-          <div class="connections-section">
-            <h3>연관된 용어</h3>
-            <div class="connection-tags" id="detail-connections">
-              <!-- Dynamically populated tags -->
-            </div>
+          <div class="example-section">
+            <h3>예시</h3>
+            <div class="term-example" id="detail-example"></div>
           </div>
         </div>
       </section>
@@ -83,7 +100,7 @@
 
     <!-- Footer -->
     <footer class="app-footer">
-      <p>&copy; 2026 AI Ecosystem Explorer &middot; Designed for premium engineering visualization</p>
+      <p>&copy; 2026 AI Ecosystem Explorer &middot; <a class="footer-contact" href="mailto:pwh0529@gmail.com">pwh0529@gmail.com</a></p>
     </footer>
   </div>
 

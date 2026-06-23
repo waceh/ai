@@ -2,14 +2,27 @@
 id: embeddings
 ---
 
-## 개요
+### 개요
 
-Embeddings는 텍스트를 고차원 실수 벡터로 변환한 표현입니다. OpenAI 공식 문서는 relatedness 측정·검색·클러스터링 용도를 명시합니다.
+Embeddings는 텍스트를 고정 차원의 숫자 벡터로 바꾼 **의미 표현**입니다. **RAG**·**Memory**에서 **Vector DB**에 저장하고, 질의와 의미가 가까운 청크를 찾아 **LLM** Prompt에 넣습니다.
 
-## 세부 내용
+비유하면, Embeddings는 "단어를 지도 좌표로 옮기기"입니다. 키워드가 달라도 의미가 비슷하면 벡터 거리가 가깝습니다. cosine similarity 등으로 nearest neighbor 검색을 합니다.
 
-OpenAI Embeddings API(`POST /v1/embeddings`)는 `text-embedding-3-small` 등 모델로 벡터를 반환합니다. RAG에서 질의·문서를 Vector DB에 넣어 유사 passage를 찾고, 장기 Memory 인덱싱에도 쓰입니다. LLM 본체와는 별도 embedding 모델을 쓰는 경우가 많습니다.
+유의사항: Embeddings ≠ LLM 출력입니다. Embedding 모델(종종 LLM 벤더 API)은 검색용 벡터만 만들고, 최종 답변 생성은 별도 LLM 호출에서 일어납니다.
 
-## 검증 근거
+### 사용목적
+
+키워드 검색만으로는 동의어·패러프레이즈를 놓치기 쉽습니다. Embeddings로 Vector DB에 저장하면 RAG·Memory에서 질의와 유사한 청크를 LLM Prompt에 넣을 수 있습니다.
+
+### 동작/구조
+
+텍스트 → Embedding 모델(종종 LLM 벤더 API) → 고정 차원 벡터 → Vector DB 인덱스. 질의도 Embeddings 후 cosine similarity 등으로 nearest neighbor 검색 → RAG가 LLM에 전달.
+
+- **RAG**: Embeddings 유사도로 관련 문서 검색
+- **Vector DB**: Embeddings·메타데이터 저장·검색
+- **Memory**: 장기 맥락 청크를 Embeddings로 보관
+- **LLM**: Embeddings로 찾은 텍스트를 Prompt로 읽음
+
+## 참고
 
 - OpenAI, "Vector embeddings": https://platform.openai.com/docs/guides/embeddings

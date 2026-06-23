@@ -2,15 +2,30 @@
 id: skills
 ---
 
-## 개요
+### 개요
 
-Skills는 에이전트에게 특정 업무 절차·도메인 지식을 알려 주는 파일 기반 확장입니다. Cursor 공식 문서는 Agent Skills를 "open standard"로 설명하며, OpenClaw는 `SKILL.md` 형식의 스킬 디렉터리를 로드합니다.
+Skills(Agent Skills)는 **AI Agent**가 특정 업무를 수행하도록 확장하는 실행 모듈·도구 묶음입니다. SKILL.md 같은 파일에 목적·단계·필요 **Tool Use**·**MCP** 연결이 정리되어, 매번 긴 **Prompt**를 붙여넣지 않아도 됩니다.
 
-## 세부 내용
+비유하면, Skills는 "업무 매뉴얼 + 전용 도구 세트"입니다. Agent는 작업을 받으면 관련 Skill을 골라 **Harness**가 Sandbox·Guardrails 안에서 절차를 실행합니다.
 
-Cursor는 `.cursor/skills/`, `.agents/skills/` 등에서 `SKILL.md`(YAML frontmatter + 본문)를 자동 발견합니다. OpenClaw는 workspace·managed·bundled 경로 우선순위로 스킬을 로드하고, ClawHub 레지스트리에서 설치할 수 있습니다(documented CLI: `openclaw skills install`). AI Agent가 Skills를 선택해 Tool Use·MCP 호출로 실행하며, Harness·Prompt 빌드 과정에서 스킬 설명이 시스템 프롬프트에 주입됩니다.
+유의사항: Skills ≠ MCP입니다. Skill은 업무 절차 전체를 담고, MCP는 그 Skill이 의존할 수 있는 외부 연결 표준입니다. **OpenClaw**·Harness는 Skills 디렉터리를 스캔해 자동 로드하는 패턴을 제공합니다.
 
-## 검증 근거
+### 사용목적
+
+매번 긴 Prompt를 붙여넣지 않고, 검증된 업무 흐름(코드 리뷰, 배포 체크 등)을 Agent에 재사용할 때 Skills가 유리합니다. OpenClaw·Harness는 Skills 디렉터리를 스캔해 자동 로드합니다.
+
+### 동작/구조
+
+Skill 정의(SKILL.md 등)에 목적·단계·필요 Tool Use·MCP 연결이 적혀 있습니다. Agent가 작업을 받으면 관련 Skill을 선택하고, Harness가 Sandbox·Guardrails 안에서 Tool Use를 실행합니다.
+
+- **AI Agent**: Skills를 로드·적용하는 실행 주체
+- **MCP**: Skill이 의존하는 외부 도구·데이터 연결
+- **Tool Use**: Skill 절차 안에서 LLM이 함수·API를 호출
+- **Prompt**: Skill 지침이 System Prompt·User Prompt와 합쳐짐
+- **Harness**: Skill 실행 루프·권한·관측을 담당
+- **OpenClaw**: Skills·MCP를 등록·동기화하는 프레임워크
+
+## 참고
 
 - Cursor Docs, "Agent Skills": https://cursor.com/docs/context/skills
 - Agent Skills 표준 사이트(Cursor 문서 링크): https://agentskills.io
