@@ -125,6 +125,60 @@ body {
   border-color: var(--color-primary);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.view-mode-tabs {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--card-border);
+}
+
+.view-mode-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.view-mode-btn:hover {
+  color: var(--text-main);
+}
+
+.view-mode-btn.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--color-primary);
+}
+
+.badge-qna {
+  background: rgba(244, 63, 94, 0.12);
+  border-color: rgba(244, 63, 94, 0.35);
+  color: #fda4af;
+}
+
+.qna-summary-line {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 0.35rem;
+  line-height: 1.55;
+}
+
+.qna-item .term-desc-preview {
+  font-style: italic;
+}
+
 .gradient-text {
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   -webkit-background-clip: text;
@@ -590,6 +644,21 @@ body.graph-modal-open {
   display: none;
 }
 
+.qna-detail-content {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.qna-detail-content.hidden {
+  display: none;
+}
+
 .connections-section {
   display: contents;
 }
@@ -800,14 +869,17 @@ body.graph-modal-open {
 }
 
 .desc-subsection-title {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-main);
-  margin: 0.85rem 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 1.1rem 0 0.45rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
   letter-spacing: 0.01em;
 }
 
-.desc-bullet-list {
+.desc-bullet-list,
+.desc-numbered-list {
   margin: 0.25rem 0 0.65rem 1rem;
   padding: 0;
   color: var(--text-muted);
@@ -815,13 +887,57 @@ body.graph-modal-open {
   line-height: 1.6;
 }
 
-.desc-bullet-list li {
-  margin-bottom: 0.3rem;
+.desc-bullet-list li,
+.desc-numbered-list li {
+  margin-bottom: 0.35rem;
 }
 
-.desc-bullet-list li strong {
+.desc-bullet-list li strong,
+.desc-numbered-list li strong,
+.desc-paragraph strong {
   color: var(--text-main);
   font-weight: 600;
+}
+
+.inline-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.86em;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  color: #e2e8f0;
+}
+
+.md-table-wrap {
+  overflow-x: auto;
+  margin: 0.5rem 0 1rem;
+}
+
+.md-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.md-table th,
+.md-table td {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.md-table th {
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--text-main);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.md-table tbody tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.45);
 }
 
 .full-desc {

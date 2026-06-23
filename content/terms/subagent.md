@@ -8,6 +8,8 @@ Subagent는 **Orchestration** 아래 특정 하위 목표를 전담하는 **AI A
 
 비유하면, Subagent는 "팀원 전문가"입니다. 상위 Orchestration Agent가 Subagent를 spawn하고, 각자 Prompt·Skills·Memory slice로 **Harness** Sandbox에서 실행한 뒤 결과를 orchestrator에 반환합니다.
 
+상위 **Orchestration** Agent가 spawn하는 전문 하위 **AI Agent**입니다. 코딩·리서치·브라우저 조작 등 역할별 에이전트 분화가 현실적인 상용화 경로로 여겨집니다.
+
 유의사항: Subagent ≠ 별도 제품입니다. Subagent도 Agent의 한 종류이며, Orchestration이 생성·배분·결과를 수집합니다. LLM은 Subagent마다 동일 또는 다른 모델을 쓸 수 있습니다.
 
 ### 사용목적

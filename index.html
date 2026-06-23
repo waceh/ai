@@ -20,14 +20,20 @@
     <!-- Header -->
     <header class="app-header">
       <h1>AI Agent & Ecosystem <span class="gradient-text">Glossary</span></h1>
-      <button type="button" class="graph-open-btn" id="open-graph-modal">연결 망 보기</button>
+      <div class="header-actions">
+        <div class="view-mode-tabs" id="view-mode-tabs" role="tablist" aria-label="탐색 모드">
+          <button type="button" class="view-mode-btn active" data-view="terms" role="tab" aria-selected="true">용어</button>
+          <button type="button" class="view-mode-btn" data-view="qna" role="tab" aria-selected="false">Q&amp;A</button>
+        </div>
+        <button type="button" class="graph-open-btn" id="open-graph-modal">연결 망 보기</button>
+      </div>
     </header>
 
     <!-- Main Workspace -->
     <main class="app-main">
       <section class="left-panel glass-card">
         <div class="panel-header">
-          <h2>용어 목록</h2>
+          <h2 id="list-panel-title">용어 목록</h2>
           <div class="search-box">
             <span class="search-icon">🔍</span>
             <input type="text" id="search-input" placeholder="용어 검색 (예: MCP, 하네스)..." autocomplete="off">
@@ -39,6 +45,12 @@
           <button class="tab-btn" data-category="core">코어 엔진</button>
           <button class="tab-btn" data-category="agent">에이전트/도구</button>
           <button class="tab-btn" data-category="env">환경/보안</button>
+        </div>
+
+        <div class="category-tabs hidden" id="qna-category-tabs">
+          <button class="tab-btn active" data-qna-category="all">전체</button>
+          <button class="tab-btn" data-qna-category="how-it-works">동작 원리</button>
+          <button class="tab-btn" data-qna-category="models">모델·제품</button>
         </div>
 
         <div class="term-list" id="term-list">
@@ -95,6 +107,25 @@
             <div class="term-example" id="detail-example"></div>
           </div>
         </div>
+
+        <div class="qna-detail-content hidden" id="qna-detail-content">
+          <div class="detail-top-bar">
+            <span class="category-badge badge-qna" id="qna-detail-category">Q&amp;A</span>
+            <div class="detail-header">
+              <h2 id="qna-detail-question">질문</h2>
+              <p class="qna-summary-line" id="qna-detail-summary"></p>
+            </div>
+            <div class="connections-section">
+              <p class="connections-label">관련 용어</p>
+              <div class="connection-tags-row" id="qna-related-row-1"></div>
+              <div class="connection-tags-row" id="qna-related-row-2"></div>
+            </div>
+          </div>
+          <div class="description-section">
+            <h3>답변</h3>
+            <div class="full-desc" id="qna-detail-body"></div>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -123,6 +154,7 @@
   </div>
 
   <!-- JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

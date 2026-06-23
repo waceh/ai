@@ -8,6 +8,8 @@ Vector DB는 **Embeddings** 벡터와 메타데이터를 저장하고, 유사도
 
 비유하면, Vector DB는 "의미 지도 색인"입니다. 일반 RDBMS LIKE 검색과 달리 패러프레이즈·동의어도 잡을 수 있습니다. **Observability**로 쿼리·히트율·지연을 추적합니다.
 
+**RAG** 파이프라인에서 수백만 청크의 **Embeddings**를 빠르게 찾기 위한 저장소입니다. FAISS·Pinecone·Weaviate 같은 전문 시스템으로 밀리초 단위 유사 검색을 수행합니다.
+
 유의사항: Vector DB ≠ Embeddings 모델입니다. Embeddings는 벡터를 만드는 단계이고, Vector DB는 그 벡터를 저장·검색하는 저장소입니다.
 
 ### 사용목적

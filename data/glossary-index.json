@@ -13,7 +13,8 @@
       "memory",
       "token",
       "context-window",
-      "fine-tuning"
+      "fine-tuning",
+      "aws-bedrock"
     ]
   },
   {
@@ -33,7 +34,9 @@
       "orchestration",
       "subagent",
       "openclaw",
-      "nanoclaw"
+      "nanoclaw",
+      "aws-bedrock",
+      "aws-knowledge-base"
     ]
   },
   {
@@ -121,7 +124,8 @@
       "skills",
       "harness",
       "planning",
-      "streaming"
+      "streaming",
+      "aws-bedrock"
     ]
   },
   {
@@ -147,7 +151,8 @@
       "nanoclaw",
       "hitl",
       "prompt",
-      "tool-use"
+      "tool-use",
+      "aws-bedrock"
     ]
   },
   {
@@ -179,7 +184,8 @@
       "embeddings",
       "vector-db",
       "rag",
-      "token"
+      "token",
+      "aws-knowledge-base"
     ]
   },
   {
@@ -205,7 +211,8 @@
       "embeddings",
       "vector-db",
       "prompt",
-      "memory"
+      "memory",
+      "aws-knowledge-base"
     ]
   },
   {
@@ -220,7 +227,8 @@
       "guardrails",
       "rag",
       "planning",
-      "skills"
+      "skills",
+      "aws-knowledge-base"
     ]
   },
   {
@@ -259,7 +267,9 @@
       "rag",
       "vector-db",
       "memory",
-      "llm"
+      "llm",
+      "aws-bedrock",
+      "aws-knowledge-base"
     ]
   },
   {
@@ -272,7 +282,8 @@
       "rag",
       "embeddings",
       "memory",
-      "observability"
+      "observability",
+      "aws-knowledge-base"
     ]
   },
   {
@@ -285,7 +296,8 @@
       "llm",
       "prompt",
       "evaluation",
-      "tool-use"
+      "tool-use",
+      "aws-bedrock"
     ]
   },
   {
@@ -326,7 +338,8 @@
       "llm",
       "token",
       "tool-use",
-      "agent"
+      "agent",
+      "aws-bedrock"
     ]
   },
   {
@@ -356,6 +369,41 @@
       "observability",
       "fine-tuning",
       "prompt"
+    ]
+  },
+  {
+    "id": "aws-bedrock",
+    "name": "AWS Bedrock",
+    "englishName": "Amazon Bedrock",
+    "category": "core",
+    "oneLine": "AWS에서 Foundation Model·에이전트·가드레일을 API로 쓰는 완전관리형 생성형 AI 서비스",
+    "connections": [
+      "llm",
+      "rag",
+      "aws-knowledge-base",
+      "tool-use",
+      "agent",
+      "guardrails",
+      "streaming",
+      "embeddings",
+      "fine-tuning"
+    ]
+  },
+  {
+    "id": "aws-knowledge-base",
+    "name": "AWS Knowledge Base",
+    "englishName": "Amazon Bedrock Knowledge Bases",
+    "category": "core",
+    "oneLine": "Bedrock에서 데이터 소스를 인덱싱·검색해 RAG 응답을 만드는 관리형 지식베이스",
+    "connections": [
+      "rag",
+      "aws-bedrock",
+      "llm",
+      "embeddings",
+      "vector-db",
+      "prompt",
+      "memory",
+      "agent"
     ]
   }
 ]

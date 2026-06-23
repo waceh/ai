@@ -8,6 +8,8 @@ Harness(Agent Harness)는 **LLM**·**Tool Use** 실행을 **Sandbox**·**Guardra
 
 비유하면, Harness는 공장의 컨veyor belt + 안전망 + CCTV입니다. **MCP**·Skills로 연결된 도구를 쓰되, 위험 행동은 차단하고 사람 승인(**HITL**)을 받으며, 모든 호출을 기록합니다.
 
+에이전트 분야에서는 **하네스 엔지니어링**이 Prompt·Skills·MCP와 함께 자주 언급됩니다. Agent Harness는 LLM API 한 줄이 아니라 모델·도구·지시·안전·관측을 묶는 실행 프레임입니다.
+
 유의사항: Harness ≠ LLM·Agent입니다. Agent는 "무엇을 할지" 결정하고, Harness는 "어떻게 안전하게 실행할지"를 담당합니다. Cursor 문서는 harness를 model + tools + instructions 조합으로 설명합니다.
 
 ### 사용목적

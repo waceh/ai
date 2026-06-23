@@ -1,0 +1,48 @@
+[
+  {
+    "id": "prompt-request-flow",
+    "question": "프롬프트로 요청하면 내부에서 어떻게 동작하나요?",
+    "summary": "입력 조립 → 토큰화 → LLM 추론 → (필요 시) Tool Use 루프로 이어지는 파이프라인입니다.",
+    "category": "how-it-works",
+    "relatedTerms": [
+      "prompt",
+      "llm",
+      "token",
+      "context-window",
+      "tool-use",
+      "agent",
+      "harness",
+      "streaming"
+    ]
+  },
+  {
+    "id": "model-opus-vs-sonnet",
+    "question": "Opus와 Sonnet은 같은 프롬프트인데 결과가 정말 다르게 나오나요?",
+    "summary": "다릅니다. 모델 가중치·용량·튜닝이 다르고, 샘플링 때문에 동일 설정이라도 매번 완전히 같지는 않습니다.",
+    "category": "models",
+    "relatedTerms": [
+      "llm",
+      "prompt",
+      "token",
+      "evaluation",
+      "fine-tuning"
+    ]
+  },
+  {
+    "id": "same-model-across-products",
+    "question": "Claude, Codex, Cursor처럼 제품이 달라도 같은 모델이면 결과가 같나요?",
+    "summary": "모델 ID가 같아도 시스템 프롬프트·도구·맥락·Harness가 다르면 최종 결과는 달라집니다.",
+    "category": "models",
+    "relatedTerms": [
+      "llm",
+      "prompt",
+      "tool-use",
+      "agent",
+      "harness",
+      "skills",
+      "mcp",
+      "memory",
+      "rag"
+    ]
+  }
+]

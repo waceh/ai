@@ -66,6 +66,8 @@ node scripts/build-bundle.js
 2. `content/terms/{id}.md`에 세부 설명 작성
 3. `connections`에 넣은 용어의 `name`이 본문에 포함되어야 인라인 링크가 생성됩니다
 
+용어 추가 시 에이전트 프롬프트 작성법은 [docs/add-term-prompt-guide.md](docs/add-term-prompt-guide.md)를 참고합니다.
+
 ### 예시 작성
 
 1. `node scripts/scaffold-examples.js` — `content/examples/{id}.md` 생성 (최초 1회)

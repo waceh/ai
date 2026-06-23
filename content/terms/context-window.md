@@ -8,6 +8,8 @@ Context Window는 **LLM**이 한 번의 호출에서 처리할 수 있는 **Toke
 
 비유하면, Context Window는 "한 장에 쓸 수 있는 원고지 매수"입니다. 한도를 넘기면 API 오류 또는 앞부분 잘림이 발생하므로, Memory·RAG로 필요한 조각만 넣어야 **AI Agent**가 안정적으로 동작합니다.
 
+모델이 한 번에 처리하는 입력·출력 길이는 성능·비용의 핵심 제약입니다. **Token**으로 환산된 상한을 넘으면 잘림·오류가 나므로 **Memory**·**RAG**로 필요한 부분만 채웁니다.
+
 유의사항: Context Window ≠ Memory입니다. Context Window는 즉시 LLM이 보는 Token 상한이고, Memory는 그 밖의 맥락을 저장·검색해 다시 창에 넣는 전략입니다.
 
 ### 사용목적

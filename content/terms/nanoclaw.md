@@ -8,6 +8,8 @@ NanoClaw는 **Sandbox** 격리·**Guardrails**·**HITL**을 핵심으로 하는 
 
 비유하면, NanoClaw는 "금고 안에서만 일하는 Agent"입니다. 설치 문서는 Docker only supported runtime을 명시하며, **Harness**와 유사한 LLM·Tool Use 루프를 격리 환경에서 돌립니다.
 
+**OpenClaw**가 넓은 권한·메신저 연동에 초점을 둔 반면 NanoClaw는 Docker **Sandbox**·**Guardrails**·**HITL**로 격리 실행에 초점을 둔 대안 프레임워크입니다.
+
 유의사항: NanoClaw ≠ OpenClaw입니다. **OpenClaw**는 Skills·MCP 플러그인 확장에, NanoClaw는 보안·격리 실행에 초점을 둡니다. 둘 다 AI Agent를 호스팅하지만 설계 우선순위가 다릅니다.
 
 ### 사용목적

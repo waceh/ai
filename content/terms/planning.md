@@ -8,6 +8,8 @@ Planning은 **LLM**·**AI Agent**가 복잡한 목표를 하위 작업으로 나
 
 비유하면, Planning은 "여행 일정 짜기"입니다. **Prompt**에 "단계별로 생각하라"는 지시를 넣고, **Orchestration**·**Subagent**로 계획을 여러 Agent에 나눠 실행합니다. **Evaluation**으로 단계·결과 품질을 확인합니다.
 
+복잡한 목표는 한 번에 답하지 않고 단계를 밟습니다. 에이전트 역사 초기에는 AutoGPT(2024)·Microsoft Magentic-One(2024)처럼 목표 분해·연속 실행을 시도한 사례가 등장했습니다. 학술적으로는 ReAct·CoT가 대표 패턴입니다.
+
 유의사항: Planning ≠ Orchestration입니다. Planning은 "무엇을 어떤 순서로 할지" 생각하는 것이고, Orchestration은 여러 Agent·Subagent에 작업을 배분·조율하는 실행 계층입니다.
 
 ### 사용목적

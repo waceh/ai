@@ -8,6 +8,8 @@ Tool Use(함수 호출·Function Calling)는 **LLM**이 JSON 형태로 함수·A
 
 비유하면, LLM이 "전화번호부에서 번호를 찾아 전화 걸기"를 하는 것입니다. 모델은 "무엇을 호출할지" JSON으로 말하고, 실행은 바깥 시스템이 담당합니다.
 
+OpenAI CUA·Claude Computer Use·Operator처럼 LLM이 브라우저·OS를 조작하는 사례가 Tool Use의 실전 형태입니다. **MCP**는 이런 도구를 표준 프로토콜로 노출하는 층입니다.
+
 유의사항: Tool Use ≠ MCP입니다. MCP는 도구를 노출하는 프로토콜이고, Tool Use는 LLM 출력 형식·실행 루프입니다. **Streaming** 모드에서는 Token·Tool Use 이벤트가 순차 전송됩니다.
 
 ### 사용목적

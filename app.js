@@ -3,21 +3,26 @@
 
 let glossaryData = [];
 const glossaryById = new Map();
-const descriptionCache = new Map();
+const descriptionRawCache = new Map();
 const descriptionPlainCache = new Map();
 const CONTENT_BASE = "content/terms";
 const EXAMPLES_BASE = "content/examples";
+const QNA_BASE = "content/qna";
 
 const exampleCache = new Map();
 
+let qnaData = [];
+const qnaById = new Map();
+
+const qnaRawCache = new Map();
+const qnaPlainCache = new Map();
+
+let markedReady = false;
+
 function cacheDescription(id, raw) {
-  const blocks = parseTermMarkdown(raw);
-  descriptionCache.set(id, blocks);
-  descriptionPlainCache.set(
-    id,
-    blocks.map((b) => b.text).filter(Boolean).join("\n")
-  );
-  return blocks;
+  descriptionRawCache.set(id, raw);
+  descriptionPlainCache.set(id, markdownToPlainText(raw));
+  return raw;
 }
 
 function buildGlossaryIndex() {
@@ -45,6 +50,15 @@ function initGlossaryFromBundle() {
       exampleCache.set(id, raw);
     });
   }
+  if (bundle.qnaIndex) {
+    qnaData = bundle.qnaIndex;
+    buildQnaIndex();
+    if (bundle.qnaArticles) {
+      Object.entries(bundle.qnaArticles).forEach(([id, raw]) => {
+        cacheQnaContent(id, raw);
+      });
+    }
+  }
   return true;
 }
 
@@ -53,6 +67,52 @@ async function initGlossaryFromFetch() {
   if (!res.ok) throw new Error(`index HTTP ${res.status}`);
   glossaryData = await res.json();
   buildGlossaryIndex();
+}
+
+function buildQnaIndex() {
+  qnaById.clear();
+  qnaData.forEach((item) => {
+    qnaById.set(item.id, item);
+  });
+}
+
+function cacheQnaContent(id, raw) {
+  qnaRawCache.set(id, raw);
+  qnaPlainCache.set(id, markdownToPlainText(raw));
+  return raw;
+}
+
+async function initQnaFromFetch() {
+  const res = await fetch("data/qna-index.json");
+  if (!res.ok) throw new Error(`qna index HTTP ${res.status}`);
+  qnaData = await res.json();
+  buildQnaIndex();
+}
+
+async function initQna() {
+  if (window.__GLOSSARY__?.qnaIndex) {
+    qnaData = window.__GLOSSARY__.qnaIndex;
+    buildQnaIndex();
+    if (window.__GLOSSARY__.qnaArticles) {
+      Object.entries(window.__GLOSSARY__.qnaArticles).forEach(([id, raw]) => {
+        cacheQnaContent(id, raw);
+      });
+    }
+    return;
+  }
+  if (!isLocalDevHost()) {
+    if (await loadBundleScript() && window.__GLOSSARY__?.qnaIndex) {
+      qnaData = window.__GLOSSARY__.qnaIndex;
+      buildQnaIndex();
+      if (window.__GLOSSARY__.qnaArticles) {
+        Object.entries(window.__GLOSSARY__.qnaArticles).forEach(([id, raw]) => {
+          cacheQnaContent(id, raw);
+        });
+      }
+      return;
+    }
+  }
+  await initQnaFromFetch();
 }
 
 function isLocalDevHost() {
@@ -82,42 +142,134 @@ async function initGlossary() {
   await initGlossaryFromFetch();
 }
 
-function parseTermMarkdown(raw) {
+function stripFrontmatter(raw) {
   let body = raw.trim();
   if (body.startsWith("---")) {
     const end = body.indexOf("---", 3);
     if (end !== -1) body = body.slice(end + 3).trim();
   }
+  return body;
+}
 
-  const blocks = [];
-  const lines = body.split("\n");
-  let paragraph = [];
+function initMarked() {
+  if (markedReady) return typeof marked !== "undefined";
+  if (typeof marked === "undefined") return false;
+  marked.setOptions({
+    gfm: true,
+    headerIds: false,
+    mangle: false,
+  });
+  markedReady = true;
+  return true;
+}
 
-  const flushParagraph = () => {
-    const text = paragraph.join(" ").trim();
-    if (text) blocks.push({ type: "p", text });
-    paragraph = [];
-  };
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("## ")) {
-      flushParagraph();
-      blocks.push({ type: "h2", text: trimmed.slice(3).trim() });
-    } else if (trimmed.startsWith("### ")) {
-      flushParagraph();
-      blocks.push({ type: "h3", text: trimmed.slice(4).trim() });
-    } else if (trimmed.startsWith("- ")) {
-      flushParagraph();
-      blocks.push({ type: "li", text: trimmed.slice(2).trim() });
-    } else if (trimmed === "") {
-      flushParagraph();
-    } else {
-      paragraph.push(trimmed);
-    }
+function markdownToPlainText(raw) {
+  const body = stripFrontmatter(raw);
+  if (initMarked()) {
+    const div = document.createElement("div");
+    div.innerHTML = marked.parse(body);
+    return (div.textContent || "").replace(/\s+/g, " ").trim();
   }
-  flushParagraph();
-  return blocks.length ? blocks : [{ type: "p", text: body }];
+  return body.replace(/[#*|`>|[\]-]/g, " ");
+}
+
+function linkifyGlossaryTerms(root, linkableIds) {
+  const skipTags = new Set(["CODE", "PRE", "BUTTON", "A", "SCRIPT", "STYLE"]);
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      let parent = node.parentElement;
+      while (parent && parent !== root) {
+        if (skipTags.has(parent.tagName)) return NodeFilter.FILTER_REJECT;
+        parent = parent.parentElement;
+      }
+      return node.textContent.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+    },
+  });
+
+  const textNodes = [];
+  while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+  textNodes.forEach((node) => {
+    const holder = document.createElement("span");
+    renderInlineContent(node.textContent, linkableIds, holder);
+    if (!holder.childNodes.length) return;
+    const frag = document.createDocumentFragment();
+    while (holder.firstChild) frag.appendChild(holder.firstChild);
+    node.parentNode.replaceChild(frag, node);
+  });
+}
+
+function applyMarkdownClasses(root) {
+  const inExample = root.classList.contains("example-markdown");
+  root.querySelectorAll("h2").forEach((el) => {
+    el.classList.add(inExample ? "example-section-title" : "desc-section-title");
+  });
+  root.querySelectorAll("h3").forEach((el) => {
+    el.classList.add(inExample ? "example-subsection-title" : "desc-subsection-title");
+  });
+  root.querySelectorAll("p").forEach((el) => {
+    if (!el.classList.contains("example-title") && !el.classList.contains("example-source")) {
+      el.classList.add("desc-paragraph");
+    }
+  });
+  root.querySelectorAll("ul").forEach((el) => {
+    if (!el.classList.contains("evidence-list")) el.classList.add("desc-bullet-list");
+  });
+  root.querySelectorAll("ol").forEach((el) => el.classList.add("desc-numbered-list"));
+  root.querySelectorAll("table").forEach((table) => {
+    if (table.closest(".md-table-wrap")) return;
+    const wrap = document.createElement("div");
+    wrap.className = "md-table-wrap";
+    table.classList.add("md-table");
+    table.parentNode.insertBefore(wrap, table);
+    wrap.appendChild(table);
+  });
+  root.querySelectorAll("code").forEach((code) => {
+    if (code.parentElement?.tagName !== "PRE") code.classList.add("inline-code");
+  });
+  root.querySelectorAll("pre").forEach((pre) => {
+    if (!pre.classList.contains("example-code")) pre.classList.add("example-code");
+  });
+}
+
+function applyEvidenceSection(root) {
+  root.querySelectorAll("h2.desc-section-title").forEach((h2) => {
+    if (h2.textContent.trim() !== "참고") return;
+    let sib = h2.nextElementSibling;
+    while (sib && (sib.tagName === "UL" || sib.tagName === "OL")) {
+      sib.classList.remove("desc-bullet-list", "desc-numbered-list");
+      sib.classList.add("evidence-list");
+      sib.querySelectorAll("li").forEach((li) => {
+        const text = li.textContent;
+        li.replaceChildren();
+        renderEvidenceItem(text, li);
+      });
+      sib = sib.nextElementSibling;
+    }
+  });
+}
+
+function renderMarkdownContent(raw, linkableIds, container, options = {}) {
+  container.replaceChildren();
+  const body = stripFrontmatter(raw);
+
+  if (!initMarked()) {
+    const fallback = document.createElement("p");
+    fallback.className = "desc-error";
+    fallback.textContent = "마크다운 렌더러를 불러오지 못했습니다. 네트워크 연결을 확인해 주세요.";
+    container.appendChild(fallback);
+    return;
+  }
+
+  const wrapper = document.createElement("div");
+  wrapper.className = options.wrapperClass || "markdown-body";
+  wrapper.innerHTML = marked.parse(body);
+  applyMarkdownClasses(wrapper);
+  if (options.evidenceSection !== false) {
+    applyEvidenceSection(wrapper);
+  }
+  linkifyGlossaryTerms(wrapper, linkableIds);
+  container.appendChild(wrapper);
 }
 
 async function loadTermExample(id) {
@@ -175,42 +327,6 @@ function isExampleReady(meta, body) {
   return withoutHeadings.length > 80;
 }
 
-function appendRichText(text, linkableIds, container) {
-  if (!text) return;
-
-  const fenceRe = /```(\w*)\n([\s\S]*?)```/g;
-  let lastIndex = 0;
-  let match;
-
-  while ((match = fenceRe.exec(text)) !== null) {
-    const before = text.slice(lastIndex, match.index).trim();
-    if (before) {
-      const p = document.createElement("p");
-      p.className = "desc-paragraph";
-      renderLinkedText(before, linkableIds, p);
-      container.appendChild(p);
-    }
-
-    const pre = document.createElement("pre");
-    pre.className = "example-code";
-    const code = document.createElement("code");
-    if (match[1]) code.className = `language-${match[1]}`;
-    code.textContent = match[2].replace(/\n$/, "");
-    pre.appendChild(code);
-    container.appendChild(pre);
-
-    lastIndex = fenceRe.lastIndex;
-  }
-
-  const tail = text.slice(lastIndex).trim();
-  if (tail) {
-    const p = document.createElement("p");
-    p.className = "desc-paragraph";
-    renderLinkedText(tail, linkableIds, p);
-    container.appendChild(p);
-  }
-}
-
 function renderExample(raw, termId, linkableIds, container) {
   container.replaceChildren();
 
@@ -242,26 +358,12 @@ function renderExample(raw, termId, linkableIds, container) {
     container.appendChild(title);
   }
 
-  const blocks = parseTermMarkdown(body);
-  blocks.forEach((block) => {
-    if (block.type === "h2") {
-      const heading = document.createElement("h4");
-      heading.className = "example-section-title";
-      heading.textContent = block.text;
-      container.appendChild(heading);
-    } else if (block.type === "h3") {
-      const heading = document.createElement("h5");
-      heading.className = "example-subsection-title";
-      heading.textContent = block.text;
-      container.appendChild(heading);
-    } else if (block.type === "li") {
-      const item = document.createElement("div");
-      item.className = "example-list-item";
-      renderLinkedText(block.text, linkableIds, item);
-      container.appendChild(item);
-    } else {
-      appendRichText(block.text, linkableIds, container);
-    }
+  const bodyHost = document.createElement("div");
+  bodyHost.className = "term-example-body";
+  container.appendChild(bodyHost);
+  renderMarkdownContent(body, linkableIds, bodyHost, {
+    wrapperClass: "markdown-body example-markdown",
+    evidenceSection: false,
   });
 
   if (meta.source) {
@@ -282,8 +384,31 @@ function renderExample(raw, termId, linkableIds, container) {
   }
 }
 
+async function loadQnaContent(id) {
+  if (qnaRawCache.has(id)) return qnaRawCache.get(id);
+
+  const bundled = window.__GLOSSARY__?.qnaArticles?.[id];
+  if (bundled) return cacheQnaContent(id, bundled);
+
+  const res = await fetch(`${QNA_BASE}/${id}.md`);
+  if (!res.ok) throw new Error(`qna HTTP ${res.status}`);
+  return cacheQnaContent(id, await res.text());
+}
+
+function preloadAllQna() {
+  if (window.__GLOSSARY__?.qnaArticles) return;
+
+  qnaData.forEach((item) => {
+    loadQnaContent(item.id)
+      .then(() => {
+        if (searchQuery && currentViewMode === "qna") renderQnaList();
+      })
+      .catch(() => {});
+  });
+}
+
 async function loadTermDescription(id) {
-  if (descriptionCache.has(id)) return descriptionCache.get(id);
+  if (descriptionRawCache.has(id)) return descriptionRawCache.get(id);
 
   const bundled = window.__GLOSSARY__?.descriptions?.[id];
   if (bundled) return cacheDescription(id, bundled);
@@ -303,77 +428,6 @@ function preloadAllDescriptions() {
       })
       .catch(() => {});
   });
-}
-
-function renderLinkedBlocks(blocks, linkableIds, container) {
-  container.replaceChildren();
-  let inEvidence = false;
-  let evidenceList = null;
-  let generalList = null;
-
-  const flushEvidenceList = () => {
-    if (evidenceList) {
-      container.appendChild(evidenceList);
-      evidenceList = null;
-    }
-  };
-
-  const flushGeneralList = () => {
-    if (generalList) {
-      container.appendChild(generalList);
-      generalList = null;
-    }
-  };
-
-  const flushLists = () => {
-    flushEvidenceList();
-    flushGeneralList();
-  };
-
-  blocks.forEach((block) => {
-    if (block.type === "h2") {
-      flushLists();
-      inEvidence = block.text === "참고";
-      const heading = document.createElement("h4");
-      heading.className = "desc-section-title";
-      heading.textContent = block.text;
-      container.appendChild(heading);
-    } else if (block.type === "h3") {
-      flushLists();
-      inEvidence = false;
-      const heading = document.createElement("h5");
-      heading.className = "desc-subsection-title";
-      heading.textContent = block.text;
-      container.appendChild(heading);
-    } else if (block.type === "li" && inEvidence) {
-      flushGeneralList();
-      if (!evidenceList) {
-        evidenceList = document.createElement("ul");
-        evidenceList.className = "evidence-list";
-      }
-      const item = document.createElement("li");
-      renderEvidenceItem(block.text, item);
-      evidenceList.appendChild(item);
-    } else if (block.type === "li") {
-      flushEvidenceList();
-      if (!generalList) {
-        generalList = document.createElement("ul");
-        generalList.className = "desc-bullet-list";
-      }
-      const item = document.createElement("li");
-      renderLinkedText(block.text, linkableIds, item);
-      generalList.appendChild(item);
-    } else {
-      flushLists();
-      inEvidence = false;
-      const paragraph = document.createElement("p");
-      paragraph.className = "desc-paragraph";
-      renderLinkedText(block.text, linkableIds, paragraph);
-      container.appendChild(paragraph);
-    }
-  });
-
-  flushLists();
 }
 
 const EVIDENCE_URL_RE = /(https?:\/\/[^\s)]+)/;
@@ -446,7 +500,7 @@ function buildLinkNeedles(linkableIds) {
   return needles;
 }
 
-function renderLinkedText(text, linkableIds, container) {
+function renderInlineContent(text, linkableIds, container) {
   container.replaceChildren();
   if (!text) return;
 
@@ -456,6 +510,37 @@ function renderLinkedText(text, linkableIds, container) {
   while (cursor < text.length) {
     let nearest = null;
 
+    if (text.startsWith("**", cursor)) {
+      const close = text.indexOf("**", cursor + 2);
+      if (close !== -1) {
+        nearest = {
+          kind: "bold",
+          index: cursor,
+          end: close + 2,
+          inner: text.slice(cursor + 2, close),
+        };
+      }
+    }
+
+    if (text[cursor] === "`") {
+      const close = text.indexOf("`", cursor + 1);
+      if (close !== -1) {
+        const candidate = {
+          kind: "code",
+          index: cursor,
+          end: close + 1,
+          inner: text.slice(cursor + 1, close),
+        };
+        if (
+          !nearest ||
+          candidate.index < nearest.index ||
+          (candidate.index === nearest.index && candidate.end > nearest.end)
+        ) {
+          nearest = candidate;
+        }
+      }
+    }
+
     for (let i = 0; i < needles.length; i++) {
       const needle = needles[i];
       const idx = text.indexOf(needle.label, cursor);
@@ -463,9 +548,15 @@ function renderLinkedText(text, linkableIds, container) {
       if (
         !nearest ||
         idx < nearest.index ||
-        (idx === nearest.index && needle.label.length > nearest.label.length)
+        (idx === nearest.index && needle.label.length > nearest.end - nearest.index)
       ) {
-        nearest = { id: needle.id, label: needle.label, index: idx };
+        nearest = {
+          kind: "link",
+          index: idx,
+          end: idx + needle.label.length,
+          id: needle.id,
+          label: needle.label,
+        };
       }
     }
 
@@ -478,18 +569,33 @@ function renderLinkedText(text, linkableIds, container) {
       container.appendChild(document.createTextNode(text.slice(cursor, nearest.index)));
     }
 
-    const link = document.createElement("button");
-    link.type = "button";
-    link.className = "inline-term-link";
-    link.textContent = nearest.label;
-    link.addEventListener("click", (e) => {
-      e.stopPropagation();
-      selectTerm(nearest.id);
-    });
-    container.appendChild(link);
+    if (nearest.kind === "bold") {
+      const strong = document.createElement("strong");
+      renderInlineContent(nearest.inner, linkableIds, strong);
+      container.appendChild(strong);
+    } else if (nearest.kind === "code") {
+      const code = document.createElement("code");
+      code.className = "inline-code";
+      code.textContent = nearest.inner;
+      container.appendChild(code);
+    } else if (nearest.kind === "link") {
+      const link = document.createElement("button");
+      link.type = "button";
+      link.className = "inline-term-link";
+      link.textContent = nearest.label;
+      link.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selectTerm(nearest.id);
+      });
+      container.appendChild(link);
+    }
 
-    cursor = nearest.index + nearest.label.length;
+    cursor = nearest.end;
   }
+}
+
+function renderLinkedText(text, linkableIds, container) {
+  renderInlineContent(text, linkableIds, container);
 }
 
 // Category metadata
@@ -499,9 +605,17 @@ const categoryMeta = {
   env: { name: "환경/보안", color: "#10b981" }
 };
 
+const qnaCategoryMeta = {
+  "how-it-works": { name: "동작 원리", color: "#38bdf8" },
+  models: { name: "모델·제품", color: "#a855f7" },
+};
+
 // State Variables
+let currentViewMode = "terms";
 let currentSelectedId = null;
+let currentSelectedQnaId = null;
 let currentCategoryFilter = "all";
+let currentQnaCategoryFilter = "all";
 let searchQuery = "";
 
 // Canvas variables
@@ -534,6 +648,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const appMain = document.querySelector(".app-main");
   try {
     await initGlossary();
+    await initQna();
+    initMarked();
   } catch (err) {
     console.error(err);
     if (appMain) {
@@ -544,6 +660,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   initUI();
+  updateListPanelChrome();
   renderTermList();
   if (glossaryData.length > 0) {
     selectTerm(glossaryData[0].id);
@@ -565,11 +682,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   preloadAllDescriptions();
+  preloadAllQna();
 });
 
 function initUI() {
   const searchInput = document.getElementById("search-input");
-  const tabButtons = document.querySelectorAll(".tab-btn");
+  const tabButtons = document.querySelectorAll("#category-tabs .tab-btn");
+  const qnaTabButtons = document.querySelectorAll("#qna-category-tabs .tab-btn");
+  const viewModeButtons = document.querySelectorAll(".view-mode-btn");
   const resetBtn = document.getElementById("reset-graph");
   const openGraphBtn = document.getElementById("open-graph-modal");
   const closeGraphBtn = document.getElementById("graph-modal-close");
@@ -578,19 +698,40 @@ function initUI() {
   initCategoryTabsDrag();
   initGraphModal(openGraphBtn, closeGraphBtn, graphBackdrop);
   initPanelResizer();
+
+  viewModeButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setViewMode(btn.dataset.view);
+    });
+  });
+
   // Search
   searchInput.addEventListener("input", (e) => {
     searchQuery = e.target.value.toLowerCase().trim();
-    renderTermList();
+    if (currentViewMode === "qna") {
+      renderQnaList();
+    } else {
+      renderTermList();
+    }
   });
 
-  // Category Tabs
+  // Category Tabs (terms)
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       tabButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       currentCategoryFilter = btn.dataset.category;
       renderTermList();
+    });
+  });
+
+  // Category Tabs (Q&A)
+  qnaTabButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      qnaTabButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentQnaCategoryFilter = btn.dataset.qnaCategory;
+      renderQnaList();
     });
   });
 
@@ -806,6 +947,206 @@ function initCategoryTabsDrag() {
   }, true);
 }
 
+function updateListPanelChrome() {
+  const title = document.getElementById("list-panel-title");
+  const searchInput = document.getElementById("search-input");
+  const termTabs = document.getElementById("category-tabs");
+  const qnaTabs = document.getElementById("qna-category-tabs");
+  const placeholderText = document.querySelector(".placeholder-text");
+
+  if (currentViewMode === "qna") {
+    if (title) title.textContent = "Q&A 목록";
+    if (searchInput) searchInput.placeholder = "질문 검색 (예: Opus, 프롬프트)…";
+    termTabs?.classList.add("hidden");
+    qnaTabs?.classList.remove("hidden");
+    if (placeholderText) {
+      placeholderText.textContent =
+        "좌측에서 궁금한 질문을 선택하세요. 관련 용어 링크로 용어집으로 이동할 수 있습니다.";
+    }
+  } else {
+    if (title) title.textContent = "용어 목록";
+    if (searchInput) searchInput.placeholder = "용어 검색 (예: MCP, 하네스)…";
+    termTabs?.classList.remove("hidden");
+    qnaTabs?.classList.add("hidden");
+    if (placeholderText) {
+      placeholderText.textContent =
+        "좌측 목록에서 용어를 선택하거나, 상단 「연결 망 보기」로 개념 관계를 탐색하세요.";
+    }
+  }
+}
+
+function setViewMode(mode) {
+  if (mode !== "terms" && mode !== "qna") return;
+  if (currentViewMode === mode) return;
+
+  currentViewMode = mode;
+  document.querySelectorAll(".view-mode-btn").forEach((btn) => {
+    const active = btn.dataset.view === mode;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-selected", active ? "true" : "false");
+  });
+
+  updateListPanelChrome();
+
+  if (mode === "qna") {
+    renderQnaList();
+    if (qnaData.length > 0) {
+      const keep =
+        currentSelectedQnaId && qnaById.has(currentSelectedQnaId)
+          ? currentSelectedQnaId
+          : qnaData[0].id;
+      selectQna(keep);
+    } else {
+      showDetailPlaceholder();
+    }
+  } else {
+    renderTermList();
+    if (glossaryData.length > 0) {
+      const keep =
+        currentSelectedId && glossaryById.has(currentSelectedId)
+          ? currentSelectedId
+          : glossaryData[0].id;
+      selectTerm(keep);
+    } else {
+      showDetailPlaceholder();
+    }
+  }
+}
+
+function showDetailPlaceholder() {
+  document.getElementById("detail-placeholder")?.classList.remove("hidden");
+  document.getElementById("detail-content")?.classList.add("hidden");
+  document.getElementById("qna-detail-content")?.classList.add("hidden");
+}
+
+function renderQnaList() {
+  const listContainer = document.getElementById("term-list");
+  listContainer.innerHTML = "";
+
+  const filtered = qnaData.filter((item) => {
+    const matchesCategory =
+      currentQnaCategoryFilter === "all" || item.category === currentQnaCategoryFilter;
+    const plain = qnaPlainCache.get(item.id) || "";
+    const matchesSearch =
+      item.question.toLowerCase().includes(searchQuery) ||
+      item.summary.toLowerCase().includes(searchQuery) ||
+      plain.toLowerCase().includes(searchQuery);
+    return matchesCategory && matchesSearch;
+  });
+
+  if (filtered.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "term-list-empty";
+    empty.textContent = searchQuery
+      ? `"${searchQuery}"에 맞는 Q&A가 없습니다.`
+      : "이 카테고리에 표시할 Q&A가 없습니다.";
+    listContainer.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach((item) => {
+    const el = document.createElement("div");
+    el.className = `term-item qna-item ${item.id === currentSelectedQnaId ? "active" : ""}`;
+    el.dataset.id = item.id;
+
+    const catLabel = qnaCategoryMeta[item.category]?.name || "Q&A";
+    el.innerHTML = `
+      <div class="term-item-header">
+        <span class="term-name">${item.question}</span>
+        <span class="term-badge badge-qna">${catLabel}</span>
+      </div>
+      <div class="term-desc-preview">${item.summary}</div>
+    `;
+
+    el.addEventListener("click", () => selectQna(item.id));
+    listContainer.appendChild(el);
+  });
+}
+
+function selectQna(id) {
+  if (currentViewMode !== "qna") {
+    setViewMode("qna");
+  }
+
+  currentSelectedQnaId = id;
+
+  document.querySelectorAll(".term-item").forEach((item) => {
+    item.classList.toggle("active", item.dataset.id === id);
+  });
+
+  const item = qnaById.get(id);
+  if (!item) return;
+
+  const placeholder = document.getElementById("detail-placeholder");
+  const termContent = document.getElementById("detail-content");
+  const qnaContent = document.getElementById("qna-detail-content");
+
+  placeholder.classList.add("hidden");
+  termContent.classList.add("hidden");
+  qnaContent.classList.remove("hidden");
+
+  const badge = document.getElementById("qna-detail-category");
+  const cat = qnaCategoryMeta[item.category];
+  badge.textContent = cat ? cat.name : "Q&A";
+  badge.className = "category-badge badge-qna";
+
+  document.getElementById("qna-detail-question").textContent = item.question;
+  document.getElementById("qna-detail-summary").textContent = item.summary;
+
+  const bodyEl = document.getElementById("qna-detail-body");
+  bodyEl.replaceChildren();
+  const loading = document.createElement("p");
+  loading.className = "desc-loading";
+  loading.textContent = "답변을 불러오는 중…";
+  bodyEl.appendChild(loading);
+
+  loadQnaContent(id)
+    .then((raw) => {
+      if (currentSelectedQnaId !== id) return;
+      renderMarkdownContent(raw, item.relatedTerms, bodyEl);
+    })
+    .catch(() => {
+      if (currentSelectedQnaId !== id) return;
+      bodyEl.replaceChildren();
+      const err = document.createElement("p");
+      err.className = "desc-error";
+      err.textContent = "답변을 불러오지 못했습니다.";
+      bodyEl.appendChild(err);
+    });
+
+  const row1El = document.getElementById("qna-related-row-1");
+  const row2El = document.getElementById("qna-related-row-2");
+  row1El.innerHTML = "";
+  row2El.innerHTML = "";
+
+  const relatedIds = (item.relatedTerms || []).filter((tid) => glossaryById.has(tid));
+  const splitAt = Math.ceil(relatedIds.length / 2);
+  const rows = [relatedIds.slice(0, splitAt), relatedIds.slice(splitAt)];
+
+  rows.forEach((ids, rowIndex) => {
+    const container = rowIndex === 0 ? row1El : row2El;
+    ids.forEach((termId) => {
+      const term = glossaryById.get(termId);
+      if (!term) return;
+
+      const btn = document.createElement("button");
+      btn.className = "tag-btn";
+      const dotColor = categoryMeta[term.category].color;
+      btn.innerHTML = `
+        <span class="tag-dot" style="background-color: ${dotColor}"></span>
+        ${term.name}
+      `;
+      btn.addEventListener("click", () => selectTerm(termId));
+      container.appendChild(btn);
+    });
+  });
+
+  const listElement = document.querySelector(`.term-item[data-id="${id}"]`);
+  if (listElement) {
+    listElement.scrollIntoView({ block: "nearest" });
+  }
+}
+
 function renderTermList() {
   const listContainer = document.getElementById("term-list");
   listContainer.innerHTML = "";
@@ -852,6 +1193,17 @@ function renderTermList() {
 }
 
 function selectTerm(id) {
+  if (currentViewMode !== "terms") {
+    currentViewMode = "terms";
+    document.querySelectorAll(".view-mode-btn").forEach((btn) => {
+      const active = btn.dataset.view === "terms";
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    updateListPanelChrome();
+    renderTermList();
+  }
+
   currentSelectedId = id;
   
   document.querySelectorAll(".term-item").forEach(item => {
@@ -867,9 +1219,11 @@ function selectTerm(id) {
 
   const placeholder = document.getElementById("detail-placeholder");
   const content = document.getElementById("detail-content");
+  const qnaContent = document.getElementById("qna-detail-content");
   
   placeholder.classList.add("hidden");
   content.classList.remove("hidden");
+  qnaContent.classList.add("hidden");
   
   const badge = document.getElementById("detail-category");
   badge.textContent = categoryMeta[term.category].name;
@@ -887,9 +1241,9 @@ function selectTerm(id) {
   descEl.appendChild(loading);
 
   loadTermDescription(id)
-    .then((blocks) => {
+    .then((raw) => {
       if (currentSelectedId !== id) return;
-      renderLinkedBlocks(blocks, term.connections, descEl);
+      renderMarkdownContent(raw, term.connections, descEl);
     })
     .catch(() => {
       if (currentSelectedId !== id) return;

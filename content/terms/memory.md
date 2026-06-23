@@ -8,6 +8,8 @@ Memory는 **AI Agent**·**LLM**이 **Context Window** 한도를 넘는 맥락을
 
 비유하면, Memory는 "책상(단기) + 서재(장기)"입니다. **Token** 예산 안에서 무엇을 책상에 올릴지 우선순위를 정합니다.
 
+LLM은 **Context Window** 한도 때문에 긴 대화·문서를 한 번에 못 봅니다. **RAG**·**Embeddings**·**Vector DB**는 장기 기억을 외부에 두고 필요한 조각만 다시 **Prompt**에 넣는 Memory 전략입니다.
+
 유의사항: Memory ≠ Context Window입니다. Context Window는 한 번에 볼 수 있는 Token 상한이고, Memory는 그 한도를 넘는 정보를 요약·검색·저장하는 전략 전체입니다.
 
 ### 사용목적

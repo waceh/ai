@@ -1137,6 +1137,94 @@ Agent Skills 사이트에는 스킬 품질 평가 가이드(\`evaluating-skills\
 - Anthropic, "Building effective agents" (evaluator-optimizer): https://www.anthropic.com/engineering/building-effective-agents
 - Agent Skills, "Evaluating skills": https://agentskills.io/skill-creation/evaluating-skills.md`,
   },
+
+  "aws-bedrock": {
+    title: "Converse API로 Bedrock FM 호출",
+    source: "https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html",
+    body: `## 시나리오
+
+AWS에서 Claude 등 Foundation Model을 쓰려면 **AWS Bedrock** \`bedrock-runtime\` 클라이언트로 추론 API를 호출합니다. Agent·RAG를 붙이기 전에 최소 대화 호출부터 확인합니다.
+
+## 따라하기
+
+1. AWS 자격 증명과 Bedrock 모델 액세스(콘솔에서 모델 활성화)를 준비합니다.
+
+2. 공식 개요 문서의 **Converse API** 예제를 실행합니다.
+
+\`\`\`python
+import boto3
+
+client = boto3.client("bedrock-runtime", region_name="us-east-1")
+response = client.converse(
+    modelId="anthropic.claude-3-sonnet-20240229-v1:0",
+    messages=[
+        {
+            "role": "user",
+            "content": [{"text": "Can you explain the features of Amazon Bedrock?"}],
+        }
+    ],
+)
+print(response)
+\`\`\`
+
+3. 모델별 JSON body가 필요하면 **InvokeModel**을 사용합니다 (동일 개요 문서 예제 참고).
+
+## 핵심 포인트
+
+- Bedrock은 FM 호스팅·IAM·과금을 담당하는 AWS 관리형 서비스입니다.
+- \`converse\`는 대화형 호출의 통합 API입니다.
+- **AWS Knowledge Base**·Agents·Guardrails는 Bedrock 위 부가 구성요소입니다.
+
+## 참고
+
+- Amazon Bedrock 개요: https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html
+- Converse API: https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html`,
+  },
+
+  "aws-knowledge-base": {
+    title: "RetrieveAndGenerate로 Knowledge Base RAG",
+    source: "https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-retrieval.html",
+    body: `## 시나리오
+
+사내 문서에 근거한 답변을 만들려면 **AWS Knowledge Base**에 데이터 소스를 연결한 뒤, 런타임에 검색·생성 API를 호출합니다. **RAG** 파이프라인을 직접 짜지 않고 Bedrock이 인덱싱·검색을 처리합니다.
+
+## 따라하기
+
+1. 콘솔 또는 API로 Knowledge Base와 데이터 소스(S3 등)를 생성·동기화합니다.
+
+2. \`bedrock-agent-runtime\` 클라이언트로 **RetrieveAndGenerate**를 호출합니다 (공식 문서 패턴).
+
+\`\`\`python
+import boto3
+
+client = boto3.client("bedrock-agent-runtime", region_name="us-east-1")
+response = client.retrieve_and_generate(
+    input={"text": "What are the main features of this knowledge base?"},
+    retrieveAndGenerateConfiguration={
+        "type": "KNOWLEDGE_BASE",
+        "knowledgeBaseConfiguration": {
+            "knowledgeBaseId": "YOUR_KB_ID",
+            "modelArn": "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0",
+        },
+    },
+)
+print(response)
+\`\`\`
+
+3. 검색만 필요하면 **Retrieve** API로 청크를 받아 앱에서 **Prompt**를 직접 조립할 수 있습니다.
+
+## 핵심 포인트
+
+- **RetrieveAndGenerate** = Retrieve + FM 생성 + 인용(citation)을 한 번에 수행합니다.
+- **Retrieve**만 쓰면 RAG 단계를 앱에서 분리·커스터마이즈할 수 있습니다.
+- 인덱싱 단계에서 **Embeddings**·**Vector DB**가 Knowledge Base 내부에 구성됩니다.
+
+## 참고
+
+- Retrieve / RetrieveAndGenerate: https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-retrieval.html
+- Knowledge Bases 개요: https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html
+- 동작 방식: https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-it-works.html`,
+  },
 };
 
 function renderExample(id, { title, source, body }) {

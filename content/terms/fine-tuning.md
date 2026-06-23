@@ -8,6 +8,8 @@ Fine-tuning은 **LLM** 가중치를 특정 도메인·스타일·**Tool Use** JS
 
 비유하면, Fine-tuning은 "이미 대학 나온 사람에게 회사 업무 교육"입니다. 예시 데이터(입력 Prompt → 기대 출력)로 모델 행동을 조정하고, **Evaluation**으로 전후 **AI Agent**·**Planning** 품질을 비교합니다.
 
+LLM 학습 절차에서 사전학습 다음 단계가 **지도학습 미세조정(SFT)** 입니다. 도메인 데이터로 가중치를 조정해 스타일·형식·분류를 맞추며, **RLHF**는 그다음 정렬 단계로 자주 이어집니다.
+
 유의사항: Fine-tuning ≠ RAG입니다. Fine-tuning은 모델 자체를 바꾸고, RAG는 검색으로 런타임 컨텍스트를 넣습니다. Prompt는 Fine-tuning과 complementary한 런타임 지시로 남습니다.
 
 ### 사용목적

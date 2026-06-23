@@ -8,6 +8,8 @@ Orchestration은 여러 **AI Agent**·**Subagent**의 작업을 조율·분배·
 
 비유하면, Orchestration은 "프로젝트 매니저"입니다. 상위 Agent(orchestrator)가 목표를 분해하고, 각 **Harness**에서 Tool Use를 실행한 뒤 **Observability**·Evaluation으로 품질을 확인합니다.
 
+여러 **AI Agent**·**Subagent**의 작업 순서·병렬 실행을 조율합니다. Microsoft Magentic-One·**AutoGPT**처럼 복잡 워크플로를 자동화하는 연속 에이전트가 대표 사례입니다.
+
 유의사항: Orchestration ≠ Planning입니다. Planning은 작업 순서를 설계하고, Orchestration은 여러 Agent·Subagent에 그 계획을 배분·병렬 실행·결과 수집합니다.
 
 ### 사용목적
