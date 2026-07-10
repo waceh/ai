@@ -27,6 +27,7 @@
     "category": "agent",
     "oneLine": "LLM 기반으로 목표를 해석하고 Planning·Tool Use로 자율 실행하는 시스템",
     "connections": [
+      "claude-code",
       "guardrails",
       "harness",
       "hitl",
@@ -68,6 +69,7 @@
     "oneLine": "AI Agent가 특정 업무를 수행하도록 확장하는 실행 모듈·도구 묶음",
     "connections": [
       "agent",
+      "claude-code",
       "guardrails",
       "harness",
       "llm",
@@ -181,8 +183,10 @@
     "oneLine": "Prompt·Tool Use 전후를 검사해 AI Agent 행동을 제한하는 안전 정책",
     "connections": [
       "agent",
+      "claude-code",
       "harness",
       "hitl",
+      "hooks",
       "llm",
       "mcp",
       "nanoclaw",
@@ -386,6 +390,7 @@
       "agent",
       "context-window",
       "harness",
+      "hooks",
       "llm",
       "memory",
       "orchestration",
@@ -418,8 +423,10 @@
     "oneLine": "AI Agent의 Prompt·Tool Use·RAG 호출을 추적·분석하는 운영 체계",
     "connections": [
       "agent",
+      "claude-code",
       "evaluation",
       "harness",
+      "hooks",
       "llm",
       "mcp",
       "memory",
@@ -487,6 +494,221 @@
       "prompt",
       "rag",
       "vector-db"
+    ]
+  },
+  {
+    "id": "claude-code",
+    "name": "Claude Code",
+    "englishName": "Claude Code",
+    "category": "env",
+    "oneLine": "터미널·IDE에서 코드베이스를 읽고 수정하는 Anthropic의 에이전틱 코딩 도구",
+    "connections": [
+      "agent",
+      "agent-sdk",
+      "claude-md",
+      "custom-commands",
+      "harness",
+      "hooks",
+      "mcp",
+      "plan-mode",
+      "prompt",
+      "skills"
+    ]
+  },
+  {
+    "id": "agent-sdk",
+    "name": "Agent SDK",
+    "englishName": "Claude Agent SDK",
+    "category": "env",
+    "oneLine": "Claude Code와 동일한 도구·루프·컨텍스트 관리를 코드로 쓰는 Agent 빌드용 SDK",
+    "connections": [
+      "agent",
+      "claude-code",
+      "harness",
+      "mcp",
+      "sandbox",
+      "subagent",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "hooks",
+    "name": "Hooks",
+    "englishName": "Claude Code Hooks",
+    "category": "env",
+    "oneLine": "특정 이벤트 시점에 스크립트를 실행해 Agent 동작을 제어하는 Claude Code 확장 지점",
+    "connections": [
+      "agent",
+      "claude-code",
+      "guardrails",
+      "observability",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "custom-commands",
+    "name": "Custom Slash Commands",
+    "englishName": "Custom Slash Commands",
+    "category": "agent",
+    "oneLine": "자주 쓰는 Prompt를 슬래시 명령으로 저장해 재사용하는 Claude Code 기능",
+    "connections": [
+      "claude-code",
+      "prompt",
+      "skills"
+    ]
+  },
+  {
+    "id": "claude-md",
+    "name": "CLAUDE.md",
+    "englishName": "CLAUDE.md",
+    "category": "env",
+    "oneLine": "프로젝트 규칙·컨텍스트를 세션마다 자동으로 읽어들이는 Claude Code 메모리 파일",
+    "connections": [
+      "claude-code",
+      "memory",
+      "prompt"
+    ]
+  },
+  {
+    "id": "plan-mode",
+    "name": "Plan Mode",
+    "englishName": "Plan Mode",
+    "category": "agent",
+    "oneLine": "파일 수정 없이 읽기·분석만 허용해 승인 전 계획을 세우는 Claude Code 실행 모드",
+    "connections": [
+      "claude-code",
+      "hitl",
+      "planning",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "progressive-disclosure",
+    "name": "Progressive Disclosure",
+    "englishName": "Progressive Disclosure",
+    "category": "core",
+    "oneLine": "Skill 설명만 먼저 로드하고 필요할 때만 본문·자료를 불러와 컨텍스트를 아끼는 설계 원칙",
+    "connections": [
+      "context-window",
+      "llm",
+      "skills",
+      "token"
+    ]
+  },
+  {
+    "id": "mcp-resource",
+    "name": "MCP Resource",
+    "englishName": "MCP Resource",
+    "category": "core",
+    "oneLine": "MCP 서버가 파일·DB 레코드 등 데이터를 URI로 노출해 LLM 컨텍스트로 읽게 하는 프리미티브",
+    "connections": [
+      "llm",
+      "mcp",
+      "prompt",
+      "rag",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "mcp-sampling",
+    "name": "MCP Sampling",
+    "englishName": "MCP Sampling",
+    "category": "core",
+    "oneLine": "MCP 서버가 자체 API 키 없이 클라이언트를 거쳐 LLM 완성을 요청하는 프리미티브",
+    "connections": [
+      "hitl",
+      "llm",
+      "mcp"
+    ]
+  },
+  {
+    "id": "tool-choice",
+    "name": "Tool Choice",
+    "englishName": "tool_choice",
+    "category": "core",
+    "oneLine": "Claude가 도구를 자동·강제·금지 중 어떻게 호출할지 지정하는 API 파라미터",
+    "connections": [
+      "llm",
+      "orchestration",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "structured-output",
+    "name": "Structured Output",
+    "englishName": "Structured Outputs",
+    "category": "core",
+    "oneLine": "JSON Schema로 Claude 응답 형식을 강제해 파싱 가능한 출력을 보장하는 기능",
+    "connections": [
+      "evaluation",
+      "llm",
+      "prompt",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "few-shot-prompting",
+    "name": "Few-shot Prompting",
+    "englishName": "Few-shot (Multishot) Prompting",
+    "category": "core",
+    "oneLine": "Prompt 안에 예시를 넣어 출력 형식·톤을 모델에 학습시키는 프롬프트 기법",
+    "connections": [
+      "evaluation",
+      "fine-tuning",
+      "prompt"
+    ]
+  },
+  {
+    "id": "message-batches-api",
+    "name": "Message Batches API",
+    "englishName": "Message Batches API",
+    "category": "env",
+    "oneLine": "최대 1만 건 요청을 비동기 일괄 처리해 절반 비용으로 처리하는 Claude API",
+    "connections": [
+      "evaluation",
+      "llm",
+      "streaming",
+      "token"
+    ]
+  },
+  {
+    "id": "workflow",
+    "name": "Workflow",
+    "englishName": "Workflow (vs Agent)",
+    "category": "agent",
+    "oneLine": "LLM·도구를 미리 정한 코드 경로로 실행해 예측 가능성을 높이는 패턴, Agent와 대비되는 개념",
+    "connections": [
+      "agent",
+      "llm",
+      "orchestration",
+      "planning"
+    ]
+  },
+  {
+    "id": "confidence-calibration",
+    "name": "Confidence Calibration",
+    "englishName": "Confidence Calibration",
+    "category": "env",
+    "oneLine": "모델 출력의 확신도가 실제 정확도와 일치하도록 다루는 신뢰성 관행",
+    "connections": [
+      "agent",
+      "evaluation",
+      "few-shot-prompting",
+      "hitl",
+      "observability",
+      "prompt"
+    ]
+  },
+  {
+    "id": "citations",
+    "name": "Citations",
+    "englishName": "Citations API",
+    "category": "core",
+    "oneLine": "응답 문장을 원문 문서의 정확한 위치에 매핑해 근거를 검증 가능하게 하는 Claude API 기능",
+    "connections": [
+      "evaluation",
+      "observability",
+      "rag"
     ]
   }
 ]

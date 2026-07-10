@@ -25,6 +25,7 @@ User Prompt → Guardrails(입력 검사) → LLM → Tool Use 선언 → Guardr
 - **HITL**: Guardrails만으로 판단 어려운 Tool Use를 사람에게 넘김
 - **Prompt**: Guardrails가 검사하는 입력·시스템 지시의 원천
 - **Tool Use**: Guardrails가 허용·거부하는 행동 단위
+- **Hooks**: Claude Code에서 Guardrails 규칙을 실제 이벤트 시점에 강제하는 실행 지점
 
 ## 참고
 

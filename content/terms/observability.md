@@ -18,15 +18,16 @@ Agent는 non-deterministic하고 Planning·Subagent·RAG가 겹치면 실패 원
 
 ### 동작/구조
 
-Harness가 각 LLM 호출·Tool Use·RAG query·Vector DB latency를 span으로 기록 → 대시보드·알림 → Evaluation 데이터셋과 연결해 회귀 감지. Cursor hooks.json은 특정 Agent 이벤트에 스크립트를 거는 확장점입니다.
+Harness가 각 LLM 호출·Tool Use·RAG query·Vector DB latency를 span으로 기록 → 대시보드·알림 → Evaluation 데이터셋과 연결해 회귀 감지. Claude Code **Hooks**는 특정 Agent 이벤트(PreToolUse·PostToolUse 등) 시점에 스크립트를 걸어 로그·알림을 남기는 확장점입니다.
 
 - **Harness**: Observability 계측을 삽입하는 실행 계층
 - **AI Agent**: Observability 대상 시스템
 - **RAG**: 검색·Prompt 주입 단계 trace
 - **Evaluation**: Observability 로그 기반 품질 측정
 - **Vector DB**: RAG·Memory 쿼리 지표 수집
+- **Hooks**: 이벤트 시점마다 관측 로그를 남기는 Claude Code 확장 지점
 
 ## 참고
 
-- Cursor 제품 문서 — Hooks(공식 SDK·문서 내 hooks.json): https://cursor.com/docs/context/skills (Hooks 교차 링크)
+- Anthropic, "Automate actions with hooks": https://code.claude.com/docs/en/hooks-guide
 - Anthropic, "Building effective agents" — 테스트·sandbox 권고: https://www.anthropic.com/engineering/building-effective-agents

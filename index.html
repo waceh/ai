@@ -165,6 +165,15 @@
 
   <!-- JavaScript -->
   <script src="vendor/marked.umd.js"></script>
-  <script src="app.js"></script>
+  <!-- http(s): ES module로 동작 (GitHub Pages·localhost) -->
+  <script type="module" src="js/main.js"></script>
+  <!-- file://: 모듈 로딩이 차단되므로 클래식 번들로 폴백 (node scripts/build-app-bundle.js 로 생성) -->
+  <script>
+    if (location.protocol === "file:") {
+      var s = document.createElement("script");
+      s.src = "app.bundle.js";
+      document.head.appendChild(s);
+    }
+  </script>
 </body>
 </html>

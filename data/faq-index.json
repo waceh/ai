@@ -60,5 +60,28 @@
       "evaluation",
       "planning"
     ]
+  },
+  {
+    "id": "agentify-existing-project",
+    "question": "특정 프로젝트를 Agent화해서 띄우고 싶다는 게 무슨 의미이고, 어떻게 하는 건가요?",
+    "summary": "사람이 직접 실행하던 프로젝트 기능을 Tool Use로 노출하고, LLM이 스스로 판단·호출하는 시스템으로 바꿔 상시 실행되게 배포하는 것입니다.",
+    "category": "how-it-works",
+    "relatedTerms": [
+      "agent",
+      "agent-sdk",
+      "claude-code",
+      "guardrails",
+      "harness",
+      "hitl",
+      "hooks",
+      "mcp",
+      "observability",
+      "orchestration",
+      "sandbox",
+      "skills",
+      "subagent",
+      "tool-use",
+      "workflow"
+    ]
   }
 ]

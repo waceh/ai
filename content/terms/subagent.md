@@ -25,6 +25,7 @@ Subagent는 **Orchestration** 아래 특정 하위 목표를 전담하는 **AI A
 - **Planning**: Subagent별 하위 계획
 - **Harness**: Subagent 실행 루프·권한
 - **LLM**: 각 Subagent의 추론 코어(동일 또는 다른 모델)
+- **Hooks**: Subagent spawn·완료 시점에 스크립트를 걸어 관측·제어하는 확장 지점
 
 ## 참고
 
