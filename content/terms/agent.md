@@ -10,7 +10,7 @@ AI Agent는 **LLM**을 두뇌로 두고, 목표를 해석한 뒤 **Planning**·*
 
 GUI에서 자율 동작하는 **지능형 에이전트**가 넓은 의미의 AI Agent입니다. 코딩 에이전트(Cursor Agent, Claude Code), Computer/Browser Use(OpenAI CUA, Claude Computer Use), Deep Research(Manus)처럼 목적별 에이전트가 먼저 상용화되었습니다.
 
-유의사항: Agent ≠ LLM입니다. LLM은 추론·생성만 하고, Agent는 루프·도구·메모리·안전 장치가 붙은 전체 시스템입니다. **OpenClaw**·**NanoClaw**는 이런 Agent를 빠르게 만드는 프레임워크이며, **Orchestration**·**Subagent**는 복잡한 일을 여러 Agent로 나눌 때 씁니다.
+유의사항: Agent ≠ LLM입니다. LLM은 추론·생성만 하고, Agent는 루프·도구·메모리·안전 장치가 붙은 전체 시스템입니다. **OpenClaw**·**NanoClaw**·**Hermes Agent**는 이런 Agent를 빠르게 만드는 프레임워크이며, **Orchestration**·**Subagent**는 복잡한 일을 여러 Agent로 나눌 때 씁니다.
 
 ### 사용목적
 
@@ -33,6 +33,7 @@ GUI에서 자율 동작하는 **지능형 에이전트**가 넓은 의미의 AI 
 - **Subagent**: Orchestration 아래 특정 하위 목표 전담 Agent
 - **OpenClaw**: Skills·MCP 플러그인을 붙이는 범용 Agent 프레임워크
 - **NanoClaw**: Sandbox 격리 중심의 경량·고보안 Agent 프레임워크
+- **Hermes Agent**: 다중 채널 지속 Memory·Subagent 위임 중심의 오픈소스 Agent 프레임워크
 
 ## 참고
 

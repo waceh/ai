@@ -75,13 +75,34 @@
       "hitl",
       "hooks",
       "mcp",
+      "mcp-resource",
       "observability",
       "orchestration",
+      "prompt",
+      "rag",
       "sandbox",
       "skills",
       "subagent",
       "tool-use",
       "workflow"
+    ]
+  },
+  {
+    "id": "openclaw-vs-nanoclaw-vs-hermes-agent",
+    "question": "OpenClaw, NanoClaw, Hermes Agent는 뭐가 다르고 언제 뭘 써야 하나요?",
+    "summary": "셋 다 범용 AI Agent 프레임워크지만 OpenClaw는 Skills·MCP 확장, NanoClaw는 Sandbox·Guardrails·HITL 격리, Hermes Agent는 다중 채널 지속 Memory·Subagent 위임에 초점을 둡니다.",
+    "category": "models",
+    "relatedTerms": [
+      "agent",
+      "openclaw",
+      "nanoclaw",
+      "hermes-agent",
+      "skills",
+      "mcp",
+      "sandbox",
+      "guardrails",
+      "hitl",
+      "subagent"
     ]
   }
 ]

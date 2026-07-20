@@ -178,6 +178,35 @@ public List<ErrorLogEntry> searchErrorLogs(
 **4. "해결"까지 자동화하고 싶다면**
 반복되는 뻔한 장애(캐시 초기화, 특정 서비스 재시작, 알려진 롤백)라면 그 자체를 **Workflow**(정해진 runbook)로 만들어 `restart_service(name)`처럼 액션 도구로 노출할 수 있습니다. 다만 실행 전 반드시 **HITL** 승인을 거치게 하고, **Guardrails**로 실행 가능한 서비스 목록을 제한해야 합니다. 코드 버그 수정처럼 매번 다른 원인 분석이 필요한 일은 runbook화가 안 되므로, 이런 경우는 진단까지만 Agent가 하고 사람(또는 Claude Code)이 이어받는 구조가 현실적입니다.
 
+### "이 페이지 기능이 이상해요" 같은 프런트 문의는 어디로, 어떻게
+
+**어디에 문의하나** — 채널은 하나, Vue 프런트에 붙인 채팅 창구입니다. Agent 루프는 서버(Gateway)에서 돌고 프런트는 그 요청을 그대로 넘기는 창구일 뿐이므로, 사용자는 "`http://aaa.bb.com/dd/ee.html`에서 저장 버튼 눌러도 반응이 없어요"처럼 자연어로 말하면 됩니다. 별도 티켓 양식이나 필드를 새로 만들 필요는 없습니다 — LLM이 문장에서 URL·증상을 알아서 뽑아냅니다.
+
+**문의 정확도를 높이려면 현재 페이지 컨텍스트를 자동으로 실어 보내세요**
+사용자가 URL을 매번 직접 안 적어도 되도록, 채팅 위젯이 요청을 보낼 때 현재 `pageUrl`·로그인 사용자 ID 같은 걸 자동으로 같이 첨부하는 게 실무 방식입니다. 새 기능이 아니라 **Prompt** 조립 단계에서 몇 필드 끼워 넣는 것뿐입니다.
+
+```json
+{
+  "message": "저장 버튼 눌러도 반응이 없어요",
+  "context": { "pageUrl": "http://aaa.bb.com/dd/ee.html", "userId": "12345" }
+}
+```
+
+**Agent가 실제로 뭘 참고해서 답하나 — 여기서도 경계는 노출된 도구입니다**
+
+| 문제 유형 | 참고 가능한가 | 근거 |
+|-----------|---------------|------|
+| 백엔드 API 에러(500, 타임아웃) | 가능 | `search_error_logs`로 해당 시간대·엔드포인트 로그 조회 |
+| 데이터 상태 이상(주문 상태 안 바뀜 등) | 가능 | `get_order_status` 같은 도메인 조회 도구 |
+| 순수 프런트엔드 버그(버튼 무반응, 화면 깨짐) | 도구 없이는 불가능 | 서버 쪽 Agent는 브라우저 안에서 무슨 일이 있었는지 볼 수 없음 |
+
+세 번째 줄이 실무에서 자주 놓치는 부분입니다. `/dd/ee.html`이라는 URL 자체는 Agent에게 아무 의미가 없습니다 — 이 URL이 어떤 화면·어떤 API를 부르는지 미리 알려주지 않으면요. 채워 넣는 방법은 두 가지입니다.
+
+1. **라우트-API 매핑을 MCP Resource로 등록**: "`/dd/ee.html` = 주문 상세 화면, 내부적으로 `GET /api/orders/{id}` 호출"처럼 정리한 문서를 **MCP Resource**로 노출해두면, Agent가 URL을 받았을 때 이 문서를 **RAG**처럼 참고해 어떤 API·로그를 조회해야 할지 스스로 찾습니다.
+2. **프런트 에러 트래킹 도구 추가**: Sentry 같은 프런트 에러 수집 시스템이 이미 있다면, 그 조회 API도 `search_frontend_errors(pageUrl, since)` 같은 도구로 하나 더 얹습니다. 그래야 JS 콘솔 에러·렌더링 실패까지 참고할 수 있습니다.
+
+둘 다 없으면 Agent는 "이 화면 자체의 문제인지 판단할 자료가 없습니다"라고 솔직하게 답하는 것이 맞습니다. 근거 없이 추측하게 두면 안 됩니다 — 이 경우엔 사람이 URL·재현 방법을 들고 프런트 레포 접근 권한이 있는 **Claude Code**로 넘겨 직접 코드를 보는 것이 다음 단계입니다.
+
 ### 같이 보면 좋은 용어
 
-**AI Agent**, **Harness**, **Agent SDK**, **Claude Code**, **MCP**, **Tool Use**, **Workflow**, **Skills**, **Orchestration**, **Subagent**, **Guardrails**, **Sandbox**, **HITL**, **Hooks**, **Observability**
+**AI Agent**, **Harness**, **Agent SDK**, **Claude Code**, **MCP**, **MCP Resource**, **Tool Use**, **Workflow**, **Skills**, **Orchestration**, **Subagent**, **Guardrails**, **Sandbox**, **HITL**, **Hooks**, **Observability**, **Prompt**, **RAG**

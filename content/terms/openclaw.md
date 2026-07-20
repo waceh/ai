@@ -10,7 +10,7 @@ OpenClaw는 다양한 **Skills**·**MCP** 플러그인을 붙이는 범용 **AI 
 
 2025년 11월 공개된 오픈소스 자율 에이전트로, Clawdbot→Moltbot→OpenClaw로 이름이 바뀌었습니다. "실제로 일을 수행하는 AI"를 표방하며 파일·브라우저·메신저 연동 등 넓은 권한으로 작업을 실행합니다.
 
-유의사항: OpenClaw와 **NanoClaw**는 대비되는 선택지입니다. OpenClaw는 Skills·MCP 확장에 초점을 두고, NanoClaw는 Sandbox·Guardrails·HITL 격리에 더 무게를 둡니다.
+유의사항: OpenClaw와 **NanoClaw**, **Hermes Agent**는 대비되는 선택지입니다. OpenClaw는 Skills·MCP 확장에 초점을 두고, NanoClaw는 Sandbox·Guardrails·HITL 격리에, Hermes Agent는 다중 채널 지속 Memory와 Subagent 위임에 더 무게를 둡니다.
 
 ### 사용목적
 
@@ -26,6 +26,7 @@ Agent 설정에 Skills·MCP 서버를 등록하고, OpenClaw 런타임이 AI Age
 - **Skills**: OpenClaw에 등록·동기화하는 업무 확장 모듈
 - **MCP**: OpenClaw Agent가 연결하는 외부 도구 표준
 - **NanoClaw**: Sandbox·Guardrails·HITL에 더 초점을 둔 경량 Agent 프레임워크(대비 선택지)
+- **Hermes Agent**: 다중 채널 지속 Memory·Subagent 위임에 초점을 둔 대안 Agent 프레임워크(대비 선택지)
 
 ## 참고
 
