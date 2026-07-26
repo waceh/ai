@@ -105,6 +105,29 @@
     ]
   },
   {
+    "id": "agent-ecosystem-flow",
+    "question": "LLM부터 Agent, 평가까지 — 이 개념들이 어떻게 하나의 흐름으로 이어지나요?",
+    "summary": "LLM(두뇌)이 Planning(CoT/ReAct)으로 사고하고, Tool Use·MCP로 도구를 연결해, AI Agent로 행동하고, Evaluation으로 결과를 검증하는 하나의 파이프라인으로 이어집니다.",
+    "category": "how-it-works",
+    "relatedTerms": [
+      "llm",
+      "planning",
+      "tool-use",
+      "mcp",
+      "agent",
+      "skills",
+      "evaluation",
+      "harness",
+      "crewai",
+      "langgraph",
+      "autogen",
+      "strands-agents",
+      "openclaw",
+      "nanoclaw",
+      "hermes-agent"
+    ]
+  },
+  {
     "id": "openclaw-vs-nanoclaw-vs-hermes-agent",
     "question": "OpenClaw, NanoClaw, Hermes Agent는 뭐가 다르고 언제 뭘 써야 하나요?",
     "summary": "셋 다 범용 AI Agent 프레임워크지만 OpenClaw는 Skills·MCP 확장, NanoClaw는 Sandbox·Guardrails·HITL 격리, Hermes Agent는 다중 채널 지속 Memory·Subagent 위임에 초점을 둡니다.",

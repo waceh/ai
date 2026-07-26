@@ -89,6 +89,7 @@
     "oneLine": "LLM·Tool Use 실행을 Sandbox·Guardrails·HITL로 감싸는 에이전트 실행 계층",
     "connections": [
       "agent",
+      "evaluation",
       "guardrails",
       "hitl",
       "llm",
@@ -164,6 +165,44 @@
       "sandbox",
       "skills",
       "subagent",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "crewai",
+    "name": "CrewAI",
+    "englishName": "CrewAI",
+    "category": "agent",
+    "oneLine": "Agent마다 역할·목표를 부여해 협업시키는 오픈소스 멀티에이전트 프레임워크",
+    "connections": [
+      "agent",
+      "agentcore-runtime",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "langgraph",
+    "name": "LangGraph",
+    "englishName": "LangGraph",
+    "category": "agent",
+    "oneLine": "그래프 구조로 상태를 유지하며 실행 흐름을 제어하는 LangChain Inc의 에이전트 오케스트레이션 프레임워크",
+    "connections": [
+      "agent",
+      "agentcore-runtime",
+      "llm",
+      "planning",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "autogen",
+    "name": "AutoGen",
+    "englishName": "AutoGen",
+    "category": "agent",
+    "oneLine": "Microsoft가 만들었고 현재는 커뮤니티가 유지보수하는 멀티에이전트 대화 프레임워크",
+    "connections": [
+      "agent",
+      "llm",
       "tool-use"
     ]
   },
@@ -399,6 +438,7 @@
       "context-window",
       "evaluation",
       "harness",
+      "langgraph",
       "llm",
       "observability",
       "planning",
@@ -538,8 +578,10 @@
       "agentcore-identity",
       "agentcore-runtime",
       "aws-bedrock",
+      "crewai",
       "guardrails",
       "harness",
+      "langgraph",
       "mcp",
       "memory",
       "observability",
@@ -558,6 +600,8 @@
     "connections": [
       "agent",
       "bedrock-agentcore",
+      "crewai",
+      "langgraph",
       "mcp",
       "memory",
       "strands-agents",

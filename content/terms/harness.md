@@ -10,7 +10,7 @@ Harness(Agent Harness)는 **LLM**·**Tool Use** 실행을 **Sandbox**·**Guardra
 
 에이전트 분야에서는 **하네스 엔지니어링**이 Prompt·Skills·MCP와 함께 자주 언급됩니다. Agent Harness는 LLM API 한 줄이 아니라 모델·도구·지시·안전·관측을 묶는 실행 프레임입니다.
 
-유의사항: Harness ≠ LLM·Agent입니다. Agent는 "무엇을 할지" 결정하고, Harness는 "어떻게 안전하게 실행할지"를 담당합니다. Cursor 문서는 harness를 model + tools + instructions 조합으로 설명합니다.
+유의사항: Harness ≠ LLM·Agent입니다. Agent는 "무엇을 할지" 결정하고, Harness는 "어떻게 안전하게 실행할지"를 담당합니다. Cursor 문서는 harness를 model + tools + instructions 조합으로 설명합니다. AI 업계에서 "harness"는 lm-evaluation-harness처럼 모델 성능을 표준화된 벤치마크로 측정하는 **Evaluation** 프레임워크를 가리킬 때도 흔히 쓰이는데, 이 사전의 Harness는 그 뜻이 아니라 위에서 설명한 Agent 실행 계층을 가리킵니다.
 
 ### 사용목적
 
