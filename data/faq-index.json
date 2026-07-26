@@ -88,6 +88,23 @@
     ]
   },
   {
+    "id": "bedrock-agentcore-agentify",
+    "question": "Bedrock AgentCore로 에이전트를 만든다는 게 정확히 뭘 만드는 건가요? 예를 들어 기존 Spring Boot 앱이 있으면 어디서부터 어떻게 하나요?",
+    "summary": "기존 앱 코드는 그대로 두고 그 API를 AgentCore Gateway에 도구로 등록한 뒤, 그 도구를 호출하는 별도의 에이전트 코드를 새로 작성해 AgentCore Runtime에 배포하는 것입니다.",
+    "category": "how-it-works",
+    "relatedTerms": [
+      "bedrock-agentcore",
+      "agentcore-gateway",
+      "agentcore-runtime",
+      "agentcore-identity",
+      "strands-agents",
+      "aws-bedrock",
+      "mcp",
+      "tool-use",
+      "agent"
+    ]
+  },
+  {
     "id": "openclaw-vs-nanoclaw-vs-hermes-agent",
     "question": "OpenClaw, NanoClaw, Hermes Agent는 뭐가 다르고 언제 뭘 써야 하나요?",
     "summary": "셋 다 범용 AI Agent 프레임워크지만 OpenClaw는 Skills·MCP 확장, NanoClaw는 Sandbox·Guardrails·HITL 격리, Hermes Agent는 다중 채널 지속 Memory·Subagent 위임에 초점을 둡니다.",
