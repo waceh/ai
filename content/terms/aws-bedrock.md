@@ -25,9 +25,12 @@ Bedrock 위에 올라가는 관련 구성요소:
 - **Guardrails** — 입·출력 안전 정책(**Guardrails** 용어와 유사)
 - **Custom model import / Fine-tuning** — 도메인 맞춤 모델
 
+만든 에이전트를 프로덕션 규모로 배포·운영하려면 별도 서비스인 **Bedrock AgentCore**를 씁니다. Bedrock이 모델 호출을 담당한다면, AgentCore는 그 위에서 세션 격리·**Memory**·**Observability**를 관리하는 배포 계층입니다.
+
 - **LLM**: Bedrock이 API로 제공하는 Foundation Model 코어
 - **RAG**: **AWS Knowledge Base**를 통해 Bedrock에서 구현
 - **AWS Knowledge Base**: Bedrock의 관리형 RAG 구성요소
+- **Bedrock AgentCore**: Bedrock 모델로 만든 에이전트를 안전하게 배포·운영하는 별도 플랫폼
 - **Tool Use**: Bedrock Agents·Converse toolConfig로 함수 호출
 - **AI Agent**: Bedrock Agents 또는 앱에서 Converse+도구 루프로 구현
 - **Guardrails**: Bedrock Guardrails 정책 계층

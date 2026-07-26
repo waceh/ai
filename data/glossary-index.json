@@ -494,12 +494,15 @@
     "connections": [
       "agent",
       "aws-knowledge-base",
+      "bedrock-agentcore",
       "embeddings",
       "fine-tuning",
       "guardrails",
       "harness",
       "llm",
       "mcp",
+      "memory",
+      "observability",
       "rag",
       "streaming",
       "tool-use"
@@ -521,6 +524,87 @@
       "prompt",
       "rag",
       "vector-db"
+    ]
+  },
+  {
+    "id": "bedrock-agentcore",
+    "name": "Bedrock AgentCore",
+    "englishName": "Amazon Bedrock AgentCore",
+    "category": "core",
+    "oneLine": "프레임워크·모델에 상관없이 AI Agent를 안전하게 배포·운영하는 AWS의 에이전틱 플랫폼",
+    "connections": [
+      "agent",
+      "agentcore-gateway",
+      "agentcore-identity",
+      "agentcore-runtime",
+      "aws-bedrock",
+      "guardrails",
+      "harness",
+      "mcp",
+      "memory",
+      "observability",
+      "sandbox",
+      "strands-agents",
+      "subagent",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "agentcore-runtime",
+    "name": "AgentCore Runtime",
+    "englishName": "Amazon Bedrock AgentCore Runtime",
+    "category": "core",
+    "oneLine": "AI Agent를 격리된 세션에서 서버리스로 배포·확장하는 AgentCore의 실행 계층",
+    "connections": [
+      "agent",
+      "bedrock-agentcore",
+      "mcp",
+      "memory",
+      "strands-agents",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "agentcore-gateway",
+    "name": "AgentCore Gateway",
+    "englishName": "Amazon Bedrock AgentCore Gateway",
+    "category": "core",
+    "oneLine": "API·Lambda·MCP 서버를 하나의 보안 엔드포인트로 묶어 에이전트에 노출하는 AgentCore 서비스",
+    "connections": [
+      "agentcore-identity",
+      "aws-bedrock",
+      "bedrock-agentcore",
+      "llm",
+      "mcp",
+      "tool-use"
+    ]
+  },
+  {
+    "id": "agentcore-identity",
+    "name": "AgentCore Identity",
+    "englishName": "Amazon Bedrock AgentCore Identity",
+    "category": "core",
+    "oneLine": "에이전트의 인증·자격 증명을 기존 IdP와 연동해 관리하는 AgentCore 서비스",
+    "connections": [
+      "agentcore-gateway",
+      "agentcore-runtime",
+      "aws-bedrock",
+      "bedrock-agentcore"
+    ]
+  },
+  {
+    "id": "strands-agents",
+    "name": "Strands Agents",
+    "englishName": "Strands Agents SDK",
+    "category": "agent",
+    "oneLine": "AWS가 만든 오픈소스 model-driven AI Agent 구축 Python/TypeScript SDK",
+    "connections": [
+      "agent",
+      "agentcore-runtime",
+      "aws-bedrock",
+      "bedrock-agentcore",
+      "llm",
+      "tool-use"
     ]
   },
   {
