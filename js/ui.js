@@ -512,7 +512,14 @@ export function renderFaqList() {
 
 export function selectFaq(id, { syncHash = true } = {}) {
   if (state.currentViewMode !== "faq") {
-    setViewMode("faq");
+    state.currentViewMode = "faq";
+    document.querySelectorAll(".view-mode-btn").forEach((btn) => {
+      const active = btn.dataset.view === "faq";
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    updateListPanelChrome();
+    renderFaqList();
   }
 
   state.currentSelectedFaqId = id;

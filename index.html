@@ -21,6 +21,7 @@
     <header class="app-header">
       <h1>AI Agent & Ecosystem <span class="gradient-text">Glossary</span></h1>
       <div class="header-actions">
+        <button type="button" class="navigation-back-btn" id="navigation-back" disabled aria-label="이전 용어 또는 FAQ로 돌아가기">← 이전으로</button>
         <div class="view-mode-tabs" id="view-mode-tabs" role="tablist" aria-label="탐색 모드">
           <button type="button" class="view-mode-btn active" data-view="terms" role="tab" aria-selected="true">용어</button>
           <button type="button" class="view-mode-btn" data-view="faq" role="tab" aria-selected="false">FAQ</button>
@@ -72,6 +73,9 @@
 
       <!-- Term Detail -->
       <section class="detail-card glass-card" id="detail-card">
+        <nav class="navigation-path" aria-label="최근 탐색 경로">
+          <ol id="navigation-path-list"></ol>
+        </nav>
         <div class="detail-placeholder" id="detail-placeholder">
           <p class="placeholder-hint">
             <span class="placeholder-icon" aria-hidden="true">💡</span>
