@@ -113,6 +113,17 @@ body {
   padding: 0;
 }
 
+.app-header .home-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-header .home-link:focus-visible {
+  outline: 2px solid var(--accent-color, #a78bfa);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
 .app-header h1 {
   min-width: 0;
   font-size: clamp(1.15rem, 1.8vw, 1.5rem);
